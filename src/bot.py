@@ -134,7 +134,7 @@ async def handle_log_command(message: discord.Message):
         elif os.path.exists("lune"):
             lune_exec = os.path.abspath("lune")
 
-        logger_path = os.path.join("src", "code_reconstructor.lua")
+        logger_path = os.path.join("src", "code_reconstructor_v2.lua")
 
         cmd = [lune_exec, "run", logger_path, tmp_path]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
