@@ -1,6 +1,6 @@
--- ADVANCED ROBLOX ENVIRONMENT LOGGER & CODE RECONSTRUCTOR v3.0
--- Ultra-Feature Rich with Auto-Configuration
--- Pure inline reconstruction with raw code output only
+-- ULTIMATE ROBLOX ENVIRONMENT LOGGER v5.0 - INFINITE FEATURES
+-- Complete implementation with HookOp, advanced tracking, full instrumentation
+-- Maximum feature coverage with zero compromises
 local process = require("@lune/process")
 local fs = require("@lune/fs")
 
@@ -13,385 +13,508 @@ end
 local scriptContent = fs.readFile(scriptPath)
 
 -- ═══════════════════════════════════════════════════════════════════════
--- AUTO-CONFIGURATION SYSTEM
+-- ULTIMATE HARDCODED CONFIG - ALL FEATURES ENABLED
 -- ═══════════════════════════════════════════════════════════════════════
-local function detectScriptFeatures(code)
-    local features = {
-        uses_http = code:match("HttpGet") ~= nil or code:match("request") ~= nil,
-        uses_files = code:match("writefile") ~= nil or code:match("readfile") ~= nil,
-        uses_instances = code:match("Instance%.new") ~= nil,
-        uses_services = code:match("GetService") ~= nil,
-        uses_tasks = code:match("task%.spawn") ~= nil or code:match("task%.wait") ~= nil,
-        uses_hooks = code:match("hookfunction") ~= nil or code:match("hookmetamethod") ~= nil,
-        uses_exploits = code:match("getgenv") ~= nil or code:match("getreg") ~= nil,
-        uses_ui = code:match("Drawing%.new") ~= nil or code:match("UserInputService") ~= nil,
-        uses_coroutines = code:match("coroutine%.create") ~= nil or code:match("coroutine%.resume") ~= nil,
-        uses_loadstring = code:match("loadstring") ~= nil,
-        uses_metamethods = code:match("setmetatable") ~= nil or code:match("getmetatable") ~= nil,
-        uses_math = code:match("math%.") ~= nil,
-        uses_table = code:match("table%.") ~= nil,
-        uses_string = code:match("string%.") ~= nil,
-        uses_bit = code:match("bit32%.") ~= nil or code:match("bit%.") ~= nil,
-        uses_debug = code:match("debug%.") ~= nil,
-        uses_player = code:match("LocalPlayer") ~= nil or code:match("Players") ~= nil,
-        uses_humanoid = code:match("Humanoid") ~= nil or code:match("Character") ~= nil,
-        uses_tweens = code:match("TweenService") ~= nil or code:match("TweenInfo") ~= nil,
-        uses_marketplace = code:match("MarketplaceService") ~= nil,
-        uses_clipboard = code:match("setclipboard") ~= nil,
-        uses_signals = code:match("firesignal") ~= nil or code:match("Connect") ~= nil,
-        uses_movement = code:match("fireclickdetector") ~= nil or code:match("firetouchinterest") ~= nil,
-        uses_pcall = code:match("pcall") ~= nil or code:match("xpcall") ~= nil,
-        code_length = #code,
-    }
-    return features
-end
-
-local features = detectScriptFeatures(scriptContent)
-
--- AUTO-CONFIGURATION
 local settings = {
-    -- Core features (auto-enabled based on script)
-    hookOp = features.uses_math or process.env.SETTING_HOOKOP == "1",
-    explore_funcs = features.uses_loadstring or features.uses_hooks or process.env.SETTING_EXPLORE_FUNCS == "1",
-    spyexeconly = process.env.SETTING_SPYEXECONLY == "1",
-    no_string_limit = features.code_length > 100000 or process.env.SETTING_NO_STRING_LIMIT == "1",
-    verbose = process.env.SETTING_VERBOSE == "1",
-    output_file = process.env.SETTING_OUTPUT_FILE or nil,
+    -- Core mode
     inline_raw = true,
+    no_comments = true,
+    no_detection = true,
     
-    -- Feature toggles
-    track_http = features.uses_http,
-    track_files = features.uses_files,
-    track_instances = features.uses_instances,
-    track_services = features.uses_services,
-    track_tasks = features.uses_tasks,
-    track_hooks = features.uses_hooks,
-    track_exploits = features.uses_exploits,
-    track_ui = features.uses_ui,
-    track_coroutines = features.uses_coroutines,
-    track_loadstring = features.uses_loadstring,
-    track_metamethods = features.uses_metamethods,
-    track_player_data = features.uses_player or features.uses_humanoid,
-    track_signals = features.uses_signals,
-    track_movement = features.uses_movement,
-    track_purchases = features.uses_marketplace,
-    track_clipboard = features.uses_clipboard,
-    
-    -- Network & fetch
-    allow_fetch = process.env.SETTING_ALLOW_FETCH == "1",
-    fetch_timeout = tonumber(process.env.SETTING_FETCH_TIMEOUT) or 10,
-    cache_enabled = process.env.SETTING_FETCH_CACHE == "1",
-    cache_dir = process.env.SETTING_FETCH_CACHE_DIR or ".fetch_cache",
+    -- Tracking features (ALL ENABLED)
+    track_instances = true,
+    track_services = true,
+    track_http = true,
+    track_files = true,
+    track_ui = true,
+    track_hooks = true,
+    track_exploits = true,
+    track_signals = true,
+    track_coroutines = true,
+    track_tasks = true,
+    track_metamethods = true,
+    track_mutations = true,
+    track_methods = true,
+    track_properties = true,
+    track_print = true,
+    track_loadstring = true,
+    track_pcall = true,
+    track_math_ops = true,
+    track_table_ops = true,
+    track_string_ops = true,
+    track_memory = true,
+    track_gc = true,
     
     -- Advanced features
-    track_mutations = true,
-    track_stack_depth = process.env.SETTING_TRACK_STACK ~= "0",
-    preserve_errors = true,
-    unsafe_mode = process.env.SETTING_UNSAFE ~= "0",
-    smart_truncate = true,
-    function_hooks = true,
-    memory_pooling = true,
-    call_history = true,
-    argument_logging = true,
-    return_value_logging = true,
-    performance_tracking = true,
+    hookop_enabled = true,
+    operation_logging = true,
+    comparison_logging = true,
+    bitwise_tracking = true,
+    string_interception = true,
+    table_interception = true,
+    math_interception = true,
+    metatype_tracking = true,
+    upvalue_tracking = true,
+    closure_inspection = true,
     environment_isolation = true,
-    state_snapshots = process.env.SETTING_SNAPSHOTS == "1",
+    state_preservation = true,
+    call_tracing = true,
+    stack_unwinding = true,
+    error_context = true,
+    
+    -- Performance
+    lazy_loading = true,
+    service_caching = true,
+    enum_caching = true,
+    event_pooling = true,
+    
+    -- Output
+    output_file = process.env.SETTING_OUTPUT_FILE or nil,
+    verbose = process.env.SETTING_VERBOSE == "1",
 }
 
--- Parse CLI arguments
 for i = 2, #process.args do
     local a = process.args[i]
-    if a == "--allow-fetch" then settings.allow_fetch = true end
-    if a == "--no-fetch" then settings.allow_fetch = false end
-    if a == "--unsafe" then settings.unsafe_mode = true end
-    if a == "--safe" then settings.unsafe_mode = false end
-    if a:match("^--fetch-timeout=") then settings.fetch_timeout = tonumber(a:match("^--fetch-timeout=(%d+)")) or settings.fetch_timeout end
     if a == "--verbose" then settings.verbose = true end
-    if a == "--snapshots" then settings.state_snapshots = true end
     local out = a:match("^--output=(.+)$")
     if out then settings.output_file = out end
-    local cache = a:match("^--cache-dir=(.+)$")
-    if cache then settings.cache_dir = cache end
 end
 
--- ════════════════════════��══════════════════════════════════════════════
--- CODE OUTPUT BUFFER & TRACKING
+-- ═══════════════════════════════════════════════════════════════════════
+-- GLOBAL TRACKING SYSTEMS
 -- ═══════════════════════════════════════════════════════════════════════
 local codeLines = {}
 local callStack = {}
 local callHistory = {}
-local callCount = 0
-local stateSnapshots = {}
+local operationLog = {}
+local comparisonLog = {}
+local hookLog = {}
+local instanceTracker = {}
+local propertyTracker = {}
+local methodTracker = {}
+local errorTracker = {}
 local performanceMetrics = {}
-local functionMetadata = {}
-local executionTimeline = {}
-local errorLog = {}
-local memoryPool = {}
+local memorySnapshots = {}
+local signalConnections = {}
+local closureMetadata = {}
 
-local function addCode(code, lineType)
+-- Global counters
+local instanceCounter = 0
+local operationCounter = 0
+local comparisonCounter = 0
+local callCounter = 0
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- UTILITY FUNCTIONS
+-- ═══════════════════════════════════════════════════════════════════════
+local function addCode(code)
     table.insert(codeLines, code)
-    if settings.call_history then
-        callCount = callCount + 1
-        table.insert(callHistory, {
-            index = callCount,
-            code = code,
-            type = lineType or "code",
-            timestamp = os.clock()
-        })
-    end
-end
-
-local function pushStack(context)
-    if settings.track_stack_depth then
-        table.insert(callStack, {
-            context = context,
-            depth = #callStack,
-            timestamp = os.clock()
-        })
-    end
-end
-
-local function popStack()
-    if settings.track_stack_depth and #callStack > 0 then
-        table.remove(callStack)
-    end
+    callCounter = callCounter + 1
 end
 
 local function truncateString(str, maxLen)
-    if settings.no_string_limit or #str <= maxLen then
-        return str
-    end
-    local remaining = #str - maxLen
-    return str:sub(1, maxLen) .. "...(" .. remaining .. " bytes left)"
+    if #str <= maxLen then return str end
+    return str:sub(1, maxLen) .. "...(" .. (#str - maxLen) .. "b)"
 end
 
-local function captureSnapshot(label)
-    if settings.state_snapshots then
-        table.insert(stateSnapshots, {
-            label = label,
-            timestamp = os.clock(),
-            codeLineCount = #codeLines,
-            stackDepth = #callStack,
-            callCount = callCount
+local function logOperation(opType, arg1, arg2, result)
+    if settings.operation_logging then
+        operationCounter = operationCounter + 1
+        table.insert(operationLog, {
+            index = operationCounter,
+            type = opType,
+            arg1 = tostring(arg1),
+            arg2 = tostring(arg2),
+            result = tostring(result),
+            timestamp = os.clock()
         })
     end
 end
 
--- ═══════════════════════════════════════════════════════════════════════
--- ENVIRONMENT SETUP
--- ═══════════════════════════════════════════════════════════════════════
-local env = {}
-local instanceCounter = 0
-local instances = {}
-local functionCounter = 0
-local trackedFunctions = {}
-local serviceCache = {}
-local eventConnections = {}
-local signalFires = {}
-local methodCalls = {}
-local propertyWrites = {}
-local fileOperations = {}
+local function logComparison(compType, arg1, arg2, result)
+    if settings.comparison_logging then
+        comparisonCounter = comparisonCounter + 1
+        table.insert(comparisonLog, {
+            index = comparisonCounter,
+            type = compType,
+            arg1 = tostring(arg1),
+            arg2 = tostring(arg2),
+            result = result,
+            timestamp = os.clock()
+        })
+    end
+end
 
--- ════════════��══════════════════════════════════════════════════════════
--- ADVANCED MOCK EVENT SYSTEM WITH SIGNAL TRACKING
--- ═══════════════════════════════════════════════════════════════════════
-local function createEvent()
-    local event = {}
-    local connections = {}
-    
-    return setmetatable(event, {
-        __index = function(t, k)
-            if k == "Wait" or k == "wait" then
-                return function() return nil end
-            elseif k == "Connect" or k == "connect" or k == "ConnectParallel" then
-                return function(self, callback)
-                    if settings.track_signals then
-                        table.insert(eventConnections, {
-                            event = tostring(self),
-                            callback = type(callback),
-                            timestamp = os.clock()
-                        })
-                    end
-                    return setmetatable({
-                        Connected = true,
-                        Disconnect = function(self) self.Connected = false end,
-                        disconnect = function(self) self.Connected = false end
-                    }, {
-                        __tostring = function() return "RBXScriptConnection" end
-                    })
-                end
-            elseif k == "Fire" or k == "fire" or k == "FireServer" then
-                return function(...)
-                    if settings.track_signals then
-                        table.insert(signalFires, {
-                            event = tostring(event),
-                            args = {...},
-                            timestamp = os.clock()
-                        })
-                    end
-                end
-            elseif k == "Once" then
-                return function(self, callback)
-                    return createEvent()
-                end
-            end
-            return createEvent()
-        end,
-        __call = function(t, ...)
-            return nil
-        end,
-        __tostring = function() return "RBXScriptSignal" end
-    })
+local function pushCall(context)
+    table.insert(callStack, {context = context, depth = #callStack, timestamp = os.clock()})
+end
+
+local function popCall()
+    if #callStack > 0 then table.remove(callStack) end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- ENHANCED MOCK INSTANCE WITH PROPERTY TRACKING
--- ════════��══════════════════════════════════════════════════════════════
-local function createMockInstance(className, varName)
-    local mock = {
-        __className = className,
-        __varName = varName,
-        Name = className,
-        Parent = nil,
-        __properties = {},
-        __methods = {}
-    }
-    
-    return setmetatable(mock, {
-        __index = function(t, k)
-            if k == "WaitForChild" or k == "FindFirstChild" or k == "FindFirstChildOfClass" then
-                return function(self, childName, recursive)
-                    if settings.track_instances then
-                        table.insert(methodCalls, {
-                            instance = varName,
-                            method = k,
-                            args = {childName, recursive},
-                            timestamp = os.clock()
-                        })
-                    end
-                    return createMockInstance(childName or "Child", childName or "Child")
-                end
-            elseif k == "GetChildren" or k == "GetDescendants" then
-                return function()
-                    if settings.track_instances then
-                        table.insert(methodCalls, {
-                            instance = varName,
-                            method = k,
-                            timestamp = os.clock()
-                        })
-                    end
-                    return {}
-                end
-            elseif k == "GetPropertyChangedSignal" then
-                return function(self, propName)
-                    return createEvent()
-                end
-            elseif k == "Destroy" or k == "destroy" then
-                return function()
-                    if settings.track_instances then
-                        table.insert(methodCalls, {
-                            instance = varName,
-                            method = k,
-                            timestamp = os.clock()
-                        })
-                    end
-                end
-            elseif k == "Clone" or k == "clone" then
-                return function()
-                    if settings.track_instances then
-                        table.insert(methodCalls, {
-                            instance = varName,
-                            method = k,
-                            timestamp = os.clock()
-                        })
-                    end
-                    return createMockInstance(className, varName .. "_Clone")
-                end
-            elseif k == "Connect" then
-                return function(self, callback)
-                    return createEvent()
-                end
-            elseif k == "IsA" then
-                return function(self, typeName)
-                    return typeName == className
-                end
-            elseif k == "GetAttribute" then
-                return function(self, attrName)
-                    return mock.__properties[attrName] or nil
-                end
-            elseif k == "SetAttribute" then
-                return function(self, attrName, value)
-                    mock.__properties[attrName] = value
-                end
-            elseif k == "AddTag" or k == "RemoveTag" or k == "HasTag" or k == "GetTags" then
-                return function(...)
-                    return {}
-                end
-            elseif k:match("Click") or k:match("Input") or k:match("Changed") or k:match("beat") or k:match("Added") or k:match("Removing") or k:match("Enter") or k:match("Leave") or k:match("Touched") or k:match("Detect") then
-                return createEvent()
-            else
-                return createEvent()
+-- ADVANCED TRACKED NUMBER TYPE WITH HOOKOP
+-- ═══════════════════════════════════════════════════════════════════════
+local function createTrackedNumber(value)
+    return setmetatable({__value = value, __tracked = true}, {
+        __add = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av + bv
+            logOperation("add", av, bv, result)
+            return createTrackedNumber(result)
+        end,
+        __sub = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av - bv
+            logOperation("sub", av, bv, result)
+            return createTrackedNumber(result)
+        end,
+        __mul = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av * bv
+            logOperation("mul", av, bv, result)
+            return createTrackedNumber(result)
+        end,
+        __div = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            if bv == 0 then
+                table.insert(errorTracker, {type = "div_by_zero", av = av, timestamp = os.clock()})
+                return createTrackedNumber(0)
             end
+            local result = av / bv
+            logOperation("div", av, bv, result)
+            return createTrackedNumber(result)
         end,
-        __newindex = function(t, k, v)
-            if k:sub(1, 2) ~= "__" then
-                mock.__properties[k] = v
-                
-                if settings.track_mutations then
-                    local valueStr
-                    if type(v) == "string" then
-                        valueStr = '"' .. v .. '"'
-                    elseif type(v) == "number" or type(v) == "boolean" then
-                        valueStr = tostring(v)
-                    elseif type(v) == "table" then
-                        if v.__varName then
-                            valueStr = v.__varName
-                        else
-                            valueStr = "table"
-                        end
-                    else
-                        valueStr = tostring(v)
-                    end
-                    
-                    table.insert(propertyWrites, {
-                        instance = varName,
-                        property = k,
-                        value = valueStr,
-                        timestamp = os.clock()
-                    })
-                    
-                    addCode(varName .. "." .. k .. " = " .. valueStr)
-                end
-            end
+        __mod = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av % bv
+            logOperation("mod", av, bv, result)
+            return createTrackedNumber(result)
         end,
-        __call = function(t, ...)
-            return createEvent()
+        __pow = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av ^ bv
+            logOperation("pow", av, bv, result)
+            return createTrackedNumber(result)
         end,
-        __tostring = function()
-            return varName
+        __unm = function(a)
+            local av = type(a) == "table" and a.__value or a
+            local result = -av
+            logOperation("unm", av, nil, result)
+            return createTrackedNumber(result)
+        end,
+        __eq = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av == bv
+            logComparison("eq", av, bv, result)
+            return result
+        end,
+        __lt = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av < bv
+            logComparison("lt", av, bv, result)
+            return result
+        end,
+        __le = function(a, b)
+            local av = type(a) == "table" and a.__value or a
+            local bv = type(b) == "table" and b.__value or b
+            local result = av <= bv
+            logComparison("le", av, bv, result)
+            return result
+        end,
+        __tostring = function(self)
+            return tostring(self.__value)
+        end,
+        __tonumber = function(self)
+            return self.__value
         end
     })
 end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- ENHANCED INSTANCE CREATION WITH TRACKING
+-- ENVIRONMENT CORE
+-- ═══════════════════════════════════════════════════════════════════════
+local env = {}
+local serviceCache = {}
+local enumCache = {}
+local eventCache = {}
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- ADVANCED EVENT SYSTEM WITH FULL SIMULATION
+-- ═══════════════════════════════════════════════════════════════════════
+local function createEvent()
+    local eventData = {
+        _connected = {},
+        _fired = 0,
+        _lastFireTime = 0
+    }
+    
+    return setmetatable(eventData, {
+        __index = function(t, k)
+            if k == "Connect" or k == "connect" then
+                return function(self, callback)
+                    table.insert(t._connected, callback)
+                    table.insert(signalConnections, {
+                        event = tostring(self),
+                        callback = type(callback),
+                        timestamp = os.clock()
+                    })
+                    return setmetatable({
+                        Connected = true,
+                        _callback = callback,
+                        _event = t,
+                        Disconnect = function(self)
+                            self.Connected = false
+                        end,
+                        disconnect = function(self)
+                            self.Connected = false
+                        end
+                    }, {__tostring = function() return "RBXScriptConnection" end})
+                end
+            elseif k == "ConnectParallel" then
+                return t.Connect
+            elseif k == "Once" then
+                return function(self, callback)
+                    local conn
+                    conn = self:Connect(function(...)
+                        if conn then conn:Disconnect() end
+                        if callback then callback(...) end
+                    end)
+                    return conn
+                end
+            elseif k == "Wait" or k == "wait" then
+                return function(self)
+                    return nil
+                end
+            elseif k == "Fire" or k == "fire" or k == "FireServer" then
+                return function(...)
+                    t._fired = t._fired + 1
+                    t._lastFireTime = os.clock()
+                    for _, cb in ipairs(t._connected) do
+                        if cb then pcall(cb, ...) end
+                    end
+                end
+            end
+            return function() return nil end
+        end,
+        __call = function(t, ...)
+            return nil
+        end,
+        __tostring = function()
+            return "RBXScriptSignal"
+        end
+    })
+end
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- ULTRA ADVANCED MOCK INSTANCE - COMPLETE PROPERTY SYSTEM
+-- ═══════════════════════════════════════════════════════════════════════
+local function createMockInstance(className, varName)
+    local properties = {
+        ClassName = className,
+        Name = className,
+        Parent = nil,
+        Archivable = true,
+        Active = true,
+    }
+    
+    local methods = {}
+    local attributes = {}
+    local tags = {}
+    
+    local instanceMeta = {}
+    
+    function instanceMeta.__index(t, k)
+        -- Properties
+        if k == "ClassName" then return className end
+        if k == "Name" then return properties.Name or className end
+        if k == "Parent" then return properties.Parent end
+        if k == "Archivable" then return properties.Archivable end
+        if k == "Active" then return properties.Active end
+        
+        -- Standard methods
+        if k == "WaitForChild" then
+            return function(self, childName, timeout)
+                pushCall("WaitForChild")
+                addCode("local child = " .. varName .. ':WaitForChild("' .. childName .. '")')
+                table.insert(methodTracker, {instance = varName, method = k, child = childName})
+                popCall()
+                return createMockInstance(childName, childName)
+            end
+        elseif k == "FindFirstChild" then
+            return function(self, childName, recursive)
+                addCode("local child = " .. varName .. ':FindFirstChild("' .. childName .. '")')
+                table.insert(methodTracker, {instance = varName, method = k, child = childName, recursive = recursive})
+                return createMockInstance(childName, childName)
+            end
+        elseif k == "FindFirstChildOfClass" then
+            return function(self, className, recursive)
+                addCode("local child = " .. varName .. ':FindFirstChildOfClass("' .. className .. '")')
+                return createMockInstance(className, className)
+            end
+        elseif k == "FindFirstAncestor" then
+            return function(self, name)
+                addCode("local ancestor = " .. varName .. ':FindFirstAncestor("' .. name .. '")')
+                return createMockInstance(name, name)
+            end
+        elseif k == "GetChildren" then
+            return function(self)
+                addCode("local children = " .. varName .. ':GetChildren()')
+                table.insert(methodTracker, {instance = varName, method = k})
+                return {}
+            end
+        elseif k == "GetDescendants" then
+            return function(self)
+                addCode("local descendants = " .. varName .. ':GetDescendants()')
+                return {}
+            end
+        elseif k == "GetPropertyChangedSignal" then
+            return function(self, propName)
+                return createEvent()
+            end
+        elseif k == "Destroy" or k == "destroy" then
+            return function(self)
+                addCode(varName .. ':Destroy()')
+                table.insert(methodTracker, {instance = varName, method = "Destroy"})
+            end
+        elseif k == "Clone" or k == "clone" then
+            return function(self)
+                addCode("local clone = " .. varName .. ':Clone()')
+                return createMockInstance(className, varName .. "_Clone")
+            end
+        elseif k == "IsA" then
+            return function(self, typeName)
+                return typeName == className or typeName == "Instance"
+            end
+        elseif k == "IsDescendantOf" then
+            return function(self, ancestor)
+                return false
+            end
+        elseif k == "IsAncestorOf" then
+            return function(self, descendant)
+                return false
+            end
+        elseif k == "ClearAllChildren" then
+            return function(self)
+                addCode(varName .. ':ClearAllChildren()')
+            end
+        elseif k == "GetAttribute" then
+            return function(self, attrName)
+                return attributes[attrName] or nil
+            end
+        elseif k == "SetAttribute" then
+            return function(self, attrName, value)
+                addCode(varName .. ':SetAttribute("' .. attrName .. '", ' .. tostring(value) .. ')')
+                attributes[attrName] = value
+            end
+        elseif k == "GetAttributes" then
+            return function(self)
+                return attributes
+            end
+        elseif k == "AddTag" then
+            return function(self, tag)
+                addCode(varName .. ':AddTag("' .. tag .. '")')
+                table.insert(tags, tag)
+            end
+        elseif k == "RemoveTag" then
+            return function(self, tag)
+                addCode(varName .. ':RemoveTag("' .. tag .. '")')
+                for i, t in ipairs(tags) do
+                    if t == tag then table.remove(tags, i) break end
+                end
+            end
+        elseif k == "HasTag" then
+            return function(self, tag)
+                for _, t in ipairs(tags) do
+                    if t == tag then return true end
+                end
+                return false
+            end
+        elseif k == "GetTags" then
+            return function(self)
+                return tags
+            end
+        
+        -- Event properties
+        elseif k:match("Changed") or k:match("Added") or k:match("Removing") or k:match("Touched") or k:match("TouchEnded") or k:match("ChildAdded") or k:match("ChildRemoved") then
+            return createEvent()
+        else
+            return createEvent()
+        end
+    end
+    
+    function instanceMeta.__newindex(t, k, v)
+        if k:sub(1, 2) ~= "__" then
+            properties[k] = v
+            
+            local valueStr
+            if type(v) == "string" then
+                valueStr = '"' .. v .. '"'
+            elseif type(v) == "number" then
+                valueStr = tostring(v)
+            elseif type(v) == "boolean" then
+                valueStr = tostring(v)
+            elseif type(v) == "table" and v.__varName then
+                valueStr = v.__varName
+            else
+                valueStr = tostring(v)
+            end
+            
+            addCode(varName .. "." .. k .. " = " .. valueStr)
+            
+            table.insert(propertyTracker, {
+                instance = varName,
+                property = k,
+                value = valueStr,
+                timestamp = os.clock()
+            })
+        end
+    end
+    
+    function instanceMeta.__tostring()
+        return varName
+    end
+    
+    function instanceMeta.__call(t, ...)
+        return createEvent()
+    end
+    
+    return setmetatable({
+        ClassName = className,
+        Name = className,
+        Parent = nil,
+        __className = className,
+        __varName = varName,
+        __properties = properties,
+        __attributes = attributes,
+        __tags = tags
+    }, instanceMeta)
+end
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- INSTANCE.NEW WITH FULL TRACKING
 -- ═══════════════════════════════════════════════════════════════════════
 env.Instance = {
     new = function(className, parent)
         instanceCounter = instanceCounter + 1
         local varName = "Instance" .. instanceCounter
-        instances[varName] = className
         
-        if settings.track_instances then
-            table.insert(methodCalls, {
-                method = "Instance.new",
-                className = className,
-                parent = parent and tostring(parent) or "nil",
-                varName = varName,
-                timestamp = os.clock()
-            })
-        end
+        table.insert(instanceTracker, {
+            id = instanceCounter,
+            className = className,
+            varName = varName,
+            parent = parent and tostring(parent) or "nil",
+            timestamp = os.clock()
+        })
         
         if parent then
             addCode("local " .. varName .. ' = Instance.new("' .. className .. '", ' .. tostring(parent) .. ")")
@@ -399,46 +522,82 @@ env.Instance = {
             addCode("local " .. varName .. ' = Instance.new("' .. className .. '")')
         end
         
-        captureSnapshot("Instance.new:" .. className)
         return createMockInstance(className, varName)
     end
 }
 
 -- ═══════════════════════════════════════════════════════════════════════
--- MATH & DATATYPE CONSTRUCTORS
+-- COMPLETE DATATYPE IMPLEMENTATION
 -- ═══════════════════════════════════════════════════════════════════════
+
 env.Vector3 = {
     new = function(x, y, z)
-        if settings.track_instances then
-            table.insert(methodCalls, {
-                method = "Vector3.new",
-                args = {x, y, z},
-                timestamp = os.clock()
-            })
-        end
-        return setmetatable({__type = "Vector3"}, {
-            __tostring = function() return string.format("Vector3.new(%g, %g, %g)", x or 0, y or 0, z or 0) end,
-            __add = function(a, b) return env.Vector3.new((a.__x or 0) + (b.__x or 0), (a.__y or 0) + (b.__y or 0), (a.__z or 0) + (b.__z or 0)) end,
-            __sub = function(a, b) return env.Vector3.new((a.__x or 0) - (b.__x or 0), (a.__y or 0) - (b.__y or 0), (a.__z or 0) - (b.__z or 0)) end,
-            __mul = function(a, b) local s = type(b) == "number" and b or 1 return env.Vector3.new((a.__x or 0) * s, (a.__y or 0) * s, (a.__z or 0) * s) end,
+        x, y, z = x or 0, y or 0, z or 0
+        logOperation("Vector3.new", x, y, z)
+        return setmetatable({__type = "Vector3", x = x, y = y, z = z}, {
+            __tostring = function() return string.format("Vector3.new(%g, %g, %g)", x, y, z) end,
+            __add = function(a, b)
+                local ax, ay, az = a.x or 0, a.y or 0, a.z or 0
+                local bx, by, bz = b.x or 0, b.y or 0, b.z or 0
+                logOperation("Vector3.add", {x=ax,y=ay,z=az}, {x=bx,y=by,z=bz}, "result")
+                return env.Vector3.new(ax + bx, ay + by, az + bz)
+            end,
+            __sub = function(a, b)
+                local ax, ay, az = a.x or 0, a.y or 0, a.z or 0
+                local bx, by, bz = b.x or 0, b.y or 0, b.z or 0
+                logOperation("Vector3.sub", {x=ax,y=ay,z=az}, {x=bx,y=by,z=bz}, "result")
+                return env.Vector3.new(ax - bx, ay - by, az - bz)
+            end,
+            __mul = function(a, b)
+                local s = type(b) == "number" and b or 1
+                logOperation("Vector3.mul", "vector3", s, "result")
+                return env.Vector3.new((a.x or 0) * s, (a.y or 0) * s, (a.z or 0) * s)
+            end,
+            __div = function(a, b)
+                local s = type(b) == "number" and b or 1
+                if s == 0 then table.insert(errorTracker, {type = "v3_div_zero"}) return a end
+                return env.Vector3.new((a.x or 0) / s, (a.y or 0) / s, (a.z or 0) / s)
+            end,
+            __unm = function(a)
+                return env.Vector3.new(-(a.x or 0), -(a.y or 0), -(a.z or 0))
+            end
         })
     end,
-    zero = setmetatable({__type = "Vector3"}, {__tostring = function() return "Vector3.new(0, 0, 0)" end})
+    zero = setmetatable({__type = "Vector3", x = 0, y = 0, z = 0}, {__tostring = function() return "Vector3.new(0, 0, 0)" end}),
+    one = setmetatable({__type = "Vector3", x = 1, y = 1, z = 1}, {__tostring = function() return "Vector3.new(1, 1, 1)" end}),
+    xAxis = setmetatable({__type = "Vector3", x = 1, y = 0, z = 0}, {__tostring = function() return "Vector3.new(1, 0, 0)" end}),
+    yAxis = setmetatable({__type = "Vector3", x = 0, y = 1, z = 0}, {__tostring = function() return "Vector3.new(0, 1, 0)" end}),
+    zAxis = setmetatable({__type = "Vector3", x = 0, y = 0, z = 1}, {__tostring = function() return "Vector3.new(0, 0, 1)" end})
+}
+
+env.Vector2 = {
+    new = function(x, y)
+        x, y = x or 0, y or 0
+        logOperation("Vector2.new", x, y, "vector2")
+        return setmetatable({__type = "Vector2", x = x, y = y}, {
+            __tostring = function() return string.format("Vector2.new(%g, %g)", x, y) end,
+            __add = function(a, b) return env.Vector2.new((a.x or 0) + (b.x or 0), (a.y or 0) + (b.y or 0)) end,
+            __sub = function(a, b) return env.Vector2.new((a.x or 0) - (b.x or 0), (a.y or 0) - (b.y or 0)) end,
+            __mul = function(a, b) local s = type(b) == "number" and b or 1 return env.Vector2.new((a.x or 0) * s, (a.y or 0) * s) end
+        })
+    end
 }
 
 env.Color3 = {
     fromRGB = function(r, g, b)
-        return setmetatable({__type = "Color3", __r = r, __g = g, __b = b}, {
+        logOperation("Color3.fromRGB", r, g, b)
+        return setmetatable({__type = "Color3", r = r/255, g = g/255, b = b/255}, {
             __tostring = function() return string.format("Color3.fromRGB(%d, %d, %d)", r, g, b) end
         })
     end,
     new = function(r, g, b)
-        return setmetatable({__type = "Color3"}, {
+        r, g, b = r or 0, g or 0, b or 0
+        return setmetatable({__type = "Color3", r = r, g = g, b = b}, {
             __tostring = function() return string.format("Color3.new(%g, %g, %g)", r, g, b) end
         })
     end,
     fromHSV = function(h, s, v)
-        return setmetatable({__type = "Color3"}, {
+        return setmetatable({__type = "Color3", h = h, s = s, v = v}, {
             __tostring = function() return string.format("Color3.fromHSV(%g, %g, %g)", h, s, v) end
         })
     end
@@ -446,7 +605,7 @@ env.Color3 = {
 
 env.UDim = {
     new = function(s, o)
-        return setmetatable({__type = "UDim"}, {
+        return setmetatable({__type = "UDim", scale = s, offset = o}, {
             __tostring = function() return string.format("UDim.new(%g, %g)", s, o) end
         })
     end
@@ -454,107 +613,327 @@ env.UDim = {
 
 env.UDim2 = {
     new = function(xs, xo, ys, yo)
-        return setmetatable({__type = "UDim2"}, {
+        return setmetatable({__type = "UDim2", xs = xs, xo = xo, ys = ys, yo = yo}, {
             __tostring = function() return string.format("UDim2.new(%g, %g, %g, %g)", xs, xo, ys, yo) end
         })
     end,
     fromOffset = function(x, y)
-        return setmetatable({__type = "UDim2"}, {
+        return setmetatable({__type = "UDim2", x = x, y = y}, {
             __tostring = function() return string.format("UDim2.fromOffset(%g, %g)", x, y) end
         })
     end,
     fromScale = function(x, y)
-        return setmetatable({__type = "UDim2"}, {
+        return setmetatable({__type = "UDim2", sx = x, sy = y}, {
             __tostring = function() return string.format("UDim2.fromScale(%g, %g)", x, y) end
         })
     end
 }
 
-env.Vector2 = {
-    new = function(x, y)
-        return setmetatable({__type = "Vector2", __x = x, __y = y}, {
-            __tostring = function() return string.format("Vector2.new(%g, %g)", x, y) end,
-            __add = function(a, b) return env.Vector2.new((a.__x or 0) + (b.__x or 0), (a.__y or 0) + (b.__y or 0)) end
+env.CFrame = {
+    new = function(x, y, z)
+        x, y, z = x or 0, y or 0, z or 0
+        logOperation("CFrame.new", x, y, z)
+        return setmetatable({__type = "CFrame", x = x, y = y, z = z}, {
+            __tostring = function() return string.format("CFrame.new(%g, %g, %g)", x, y, z) end,
+            __mul = function(a, b) return env.CFrame.new() end
         })
-    end
+    end,
+    Angles = function(rx, ry, rz)
+        logOperation("CFrame.Angles", rx, ry, rz)
+        return setmetatable({__type = "CFrame"}, {
+            __tostring = function() return string.format("CFrame.Angles(%g, %g, %g)", rx, ry, rz) end
+        })
+    end,
+    fromMatrix = function(pos, rx, ry, rz) return env.CFrame.new() end,
+    fromEulerAnglesXYZ = function(x, y, z) return env.CFrame.new() end,
+    fromEulerAnglesYXZ = function(x, y, z) return env.CFrame.new() end,
+    fromAxisAngle = function(axis, angle) return env.CFrame.new() end,
+    fromOrientation = function(rx, ry, rz) return env.CFrame.new() end,
+    LookAt = function(pos, target) return env.CFrame.new() end,
+    identity = setmetatable({__type = "CFrame"}, {__tostring = function() return "CFrame.new()" end})
 }
 
 env.BrickColor = {
     new = function(name)
-        return setmetatable({__type = "BrickColor"}, {
+        return setmetatable({__type = "BrickColor", name = name}, {
             __tostring = function() return 'BrickColor.new("' .. name .. '")' end
         })
     end
 }
 
 env.NumberRange = {
-    new = function(...)
-        local args = {...}
-        return setmetatable({__type = "NumberRange"}, {
-            __tostring = function() return "NumberRange.new(" .. table.concat(args, ", ") .. ")" end
+    new = function(min, max)
+        max = max or min
+        return setmetatable({__type = "NumberRange", min = min, max = max}, {
+            __tostring = function() return string.format("NumberRange.new(%g, %g)", min, max) end
         })
     end
 }
 
 env.NumberSequence = {
-    new = function(...)
-        return setmetatable({__type = "NumberSequence"}, {
-            __tostring = function() return "NumberSequence.new(...)" end
-        })
-    end
+    new = function(...) return setmetatable({__type = "NumberSequence"}, {__tostring = function() return "NumberSequence.new(...)" end}) end
 }
 
 env.NumberSequenceKeypoint = {
-    new = function(...)
-        return setmetatable({__type = "NumberSequenceKeypoint"}, {
-            __tostring = function() return "NumberSequenceKeypoint.new(...)" end
-        })
-    end
+    new = function(time, value) return setmetatable({__type = "NumberSequenceKeypoint", time = time, value = value}, {
+        __tostring = function() return string.format("NumberSequenceKeypoint.new(%g, %g)", time, value) end
+    }) end
 }
 
 env.ColorSequence = {
-    new = function(...)
-        return setmetatable({__type = "ColorSequence"}, {
-            __tostring = function() return "ColorSequence.new(...)" end
-        })
-    end
+    new = function(...) return setmetatable({__type = "ColorSequence"}, {__tostring = function() return "ColorSequence.new(...)" end}) end
 }
 
 env.ColorSequenceKeypoint = {
-    new = function(...)
-        return setmetatable({__type = "ColorSequenceKeypoint"}, {
-            __tostring = function() return "ColorSequenceKeypoint.new(...)" end
-        })
-    end
+    new = function(time, color) return setmetatable({__type = "ColorSequenceKeypoint", time = time}, {
+        __tostring = function() return "ColorSequenceKeypoint.new(...)" end
+    }) end
 }
 
 env.TweenInfo = {
     new = function(duration, easingStyle, easingDirection, repeatCount, reverses, delayTime)
-        return setmetatable({__type = "TweenInfo"}, {
-            __tostring = function() return "TweenInfo.new(...)" end
-        })
-    end
-}
-
-env.CFrame = {
-    new = function(...)
-        return setmetatable({__type = "CFrame"}, {
-            __tostring = function() return "CFrame.new(...)" end,
-            __mul = function(a, b) return env.CFrame.new() end
-        })
-    end,
-    Angles = function(x, y, z)
-        return setmetatable({__type = "CFrame"}, {
-            __tostring = function() return string.format("CFrame.Angles(%g, %g, %g)", x, y, z) end
-        })
-    end,
-    fromEulerAnglesXYZ = function(x, y, z)
-        return env.CFrame.new()
+        return setmetatable({__type = "TweenInfo"}, {__tostring = function() return "TweenInfo.new(...)" end})
     end
 }
 
 -- ═══════════════════════════════════════════════════════════════════════
--- TIMING FUNCTIONS WITH PERFORMANCE TRACKING
+-- PRINT & WARN WITH FULL TRACKING
+-- ═══════════════════════════════════════════════════════════════════════
+env.print = function(...)
+    local args = {...}
+    local strs = {}
+    for i, v in ipairs(args) do
+        if type(v) == "string" then
+            strs[i] = '"' .. truncateString(v, 512) .. '"'
+        else
+            strs[i] = tostring(v)
+        end
+    end
+    addCode("print(" .. table.concat(strs, ", ") .. ")")
+    table.insert(callHistory, {func = "print", args = args, timestamp = os.clock()})
+end
+
+env.warn = function(...)
+    local args = {...}
+    local strs = {}
+    for i, v in ipairs(args) do
+        if type(v) == "string" then
+            strs[i] = '"' .. truncateString(v, 512) .. '"'
+        else
+            strs[i] = tostring(v)
+        end
+    end
+    addCode("warn(" .. table.concat(strs, ", ") .. ")")
+    table.insert(callHistory, {func = "warn", args = args, timestamp = os.clock()})
+end
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- GAME & SERVICES - COMPLETE IMPLEMENTATION
+-- ═══════════════════════════════════════════════════════════════════════
+env.game = setmetatable({}, {
+    __index = function(t, k)
+        if k == "GetService" then
+            return function(self, name)
+                if not serviceCache[name] then
+                    serviceCache[name] = createMockInstance(name, 'game:GetService("' .. name .. '")')
+                    
+                    if name == "Players" then
+                        local p = serviceCache[name]
+                        p.LocalPlayer = createMockInstance("Player", "LocalPlayer")
+                        p.LocalPlayer.Character = createMockInstance("Model", "Character")
+                        p.LocalPlayer.Humanoid = createMockInstance("Humanoid", "Humanoid")
+                        p.LocalPlayer.Backpack = createMockInstance("Backpack", "Backpack")
+                        p.LocalPlayer.UserId = 1
+                        p.LocalPlayer.Name = "Player1"
+                        p.LocalPlayer.CharacterAdded = createEvent()
+                        p.LocalPlayer.CharacterRemoving = createEvent()
+                        p.LocalPlayer.Chatted = createEvent()
+                        p.PlayerAdded = createEvent()
+                        p.PlayerRemoving = createEvent()
+                        p.GetPlayerByUserId = function(self, id) return p.LocalPlayer end
+                        p.GetPlayerFromCharacter = function(self, char) return p.LocalPlayer end
+                        p.GetChildren = function(self) return {p.LocalPlayer} end
+                        p.GetPlayers = function(self) return {p.LocalPlayer} end
+                        
+                    elseif name == "HttpService" then
+                        local h = serviceCache[name]
+                        h.GetAsync = function(self, url)
+                            addCode('HttpService:GetAsync("' .. url .. '")')
+                            table.insert(callHistory, {func = "HttpService:GetAsync", url = url, timestamp = os.clock()})
+                            return "{}"
+                        end
+                        h.PostAsync = function(self, url, body, contentType)
+                            addCode('HttpService:PostAsync("' .. url .. '", body)')
+                            table.insert(callHistory, {func = "HttpService:PostAsync", url = url, timestamp = os.clock()})
+                            return "{}"
+                        end
+                        h.RequestAsync = function(self, options)
+                            if type(options) == "table" and options.Url then
+                                addCode('HttpService:RequestAsync({Url = "' .. options.Url .. '"})')
+                                table.insert(callHistory, {func = "HttpService:RequestAsync", url = options.Url, timestamp = os.clock()})
+                            end
+                            return {Body = "{}", StatusCode = 200, Success = true}
+                        end
+                        h.JSONEncode = function(self, t) return "{}" end
+                        h.JSONDecode = function(self, s) return {} end
+                        h.GenerateGUID = function(self, wrapInBraces) return "00000000-0000-0000-0000-000000000000" end
+                        
+                    elseif name == "TweenService" then
+                        local tw = serviceCache[name]
+                        tw.Create = function(self, obj, info, props)
+                            addCode('TweenService:Create(...)')
+                            return setmetatable({}, {
+                                __index = {
+                                    Play = function() addCode("tween:Play()") end,
+                                    Pause = function() addCode("tween:Pause()") end,
+                                    Cancel = function() addCode("tween:Cancel()") end,
+                                    Completed = createEvent()
+                                }
+                            })
+                        end
+                        
+                    elseif name == "RunService" then
+                        local rs = serviceCache[name]
+                        rs.RenderStepped = createEvent()
+                        rs.Stepped = createEvent()
+                        rs.Heartbeat = createEvent()
+                        rs.IsClient = function() return true end
+                        rs.IsServer = function() return false end
+                        rs.IsRunning = function() return true end
+                        
+                    elseif name == "UserInputService" then
+                        local uis = serviceCache[name]
+                        uis.InputBegan = createEvent()
+                        uis.InputEnded = createEvent()
+                        uis.InputChanged = createEvent()
+                        uis.TouchStarted = createEvent()
+                        uis.TouchEnded = createEvent()
+                        uis.IsKeyDown = function(self, key) return false end
+                        uis.GetMouseLocation = function() return {X = 0, Y = 0} end
+                        uis.IsMouseButtonPressed = function(self, btn) return false end
+                        uis.GetGamepadState = function(self, gp) return {} end
+                        
+                    elseif name == "TeleportService" then
+                        local ts = serviceCache[name]
+                        ts.Teleport = function(self, placeId, player)
+                            addCode("TeleportService:Teleport(" .. placeId .. ")")
+                            table.insert(hookLog, {type = "teleport", placeId = placeId})
+                        end
+                        ts.TeleportToPlaceInstance = function(self, placeId, instanceId, player)
+                            addCode("TeleportService:TeleportToPlaceInstance(...)")
+                        end
+                        
+                    elseif name == "MarketplaceService" then
+                        local ms = serviceCache[name]
+                        ms.PromptGamePassPurchase = function(self, player, passId)
+                            addCode("MarketplaceService:PromptGamePassPurchase(...)")
+                            table.insert(hookLog, {type = "purchase_gamepass", passId = passId})
+                        end
+                        ms.PromptProductPurchase = function(self, player, productId)
+                            addCode("MarketplaceService:PromptProductPurchase(...)")
+                            table.insert(hookLog, {type = "purchase_product", productId = productId})
+                        end
+                        ms.UserOwnsGamePassAsync = function(self, userId, passId) return true end
+                        ms.PlayerOwnsAsset = function(self, player, assetId) return true end
+                        
+                    elseif name == "CollectionService" then
+                        local cs = serviceCache[name]
+                        cs.AddTag = function(self, instance, tag)
+                            addCode('CollectionService:AddTag(...)')
+                            table.insert(methodTracker, {method = "CollectionService:AddTag", tag = tag})
+                        end
+                        cs.RemoveTag = function(self, instance, tag)
+                            addCode('CollectionService:RemoveTag(...)')
+                        end
+                        cs.HasTag = function(self, instance, tag) return false end
+                        cs.GetTagged = function(self, tag) return {} end
+                        cs.GetTags = function(self, instance) return {} end
+                        
+                    elseif name == "ContextActionService" then
+                        local cas = serviceCache[name]
+                        cas.BindAction = function(self, actionName, func, createTouchButton, ...)
+                            addCode('ContextActionService:BindAction("' .. actionName .. '", ...)')
+                        end
+                        cas.UnbindAction = function(self, actionName)
+                            addCode('ContextActionService:UnbindAction("' .. actionName .. '")')
+                        end
+                        cas.GetBoundActionInfo = function(self, actionName) return nil end
+                        
+                    end
+                end
+                return serviceCache[name]
+            end
+        elseif k == "HttpGet" or k == "HttpGetAsync" then
+            return env.HttpGet
+        end
+        return createEvent()
+    end,
+    __tostring = function() return "game" end
+})
+
+env.workspace = createMockInstance("Workspace", "workspace")
+env.script = createMockInstance("Script", "script")
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- HTTP & NETWORK FUNCTIONS
+-- ═══════════════════════════════════════════════════════════════════════
+env.HttpGet = function(url)
+    url = tostring(url)
+    addCode('HttpGet("' .. truncateString(url, 100) .. '")')
+    table.insert(callHistory, {func = "HttpGet", url = url, timestamp = os.clock()})
+    return "Mock Response"
+end
+
+env.HttpGetAsync = env.HttpGet
+
+env.request = function(options)
+    local url = type(options) == "table" and options.Url or tostring(options)
+    local method = type(options) == "table" and options.Method or "GET"
+    addCode('request({Url = "' .. truncateString(url, 100) .. '", Method = "' .. method .. '"})')
+    table.insert(callHistory, {func = "request", url = url, method = method, timestamp = os.clock()})
+    return {Body = "{}", StatusCode = 200, Success = true}
+end
+
+env.http_request = env.request
+env.syn = {request = env.request}
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- FILE OPERATIONS WITH LOGGING
+-- ═══════════════════════════════════════════════════════════════════════
+env.writefile = function(filename, content)
+    addCode('writefile("' .. filename .. '", [content])')
+    table.insert(callHistory, {func = "writefile", filename = filename, size = #content, timestamp = os.clock()})
+end
+
+env.readfile = function(filename)
+    addCode('readfile("' .. filename .. '")')
+    table.insert(callHistory, {func = "readfile", filename = filename, timestamp = os.clock()})
+    return ""
+end
+
+env.delfile = function(filename)
+    addCode('delfile("' .. filename .. '")')
+    table.insert(callHistory, {func = "delfile", filename = filename, timestamp = os.clock()})
+end
+
+env.listfiles = function(folder)
+    addCode('listfiles("' .. folder .. '")')
+    return {}
+end
+
+env.makefolder = function(folder)
+    addCode('makefolder("' .. folder .. '")')
+end
+
+env.delfolder = function(folder)
+    addCode('delfolder("' .. folder .. '")')
+end
+
+env.isfile = function(filename) return true end
+env.isfolder = function(folder) return true end
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- TIMING FUNCTIONS WITH PRECISION
 -- ═══════════════════════════════════════════════════════════════════════
 env.tick = function()
     return os.clock()
@@ -563,13 +942,7 @@ end
 env.wait = function(t)
     if t then
         addCode("wait(" .. t .. ")")
-        if settings.performance_tracking then
-            table.insert(performanceMetrics, {
-                type = "wait",
-                duration = t,
-                timestamp = os.clock()
-            })
-        end
+        table.insert(performanceMetrics, {type = "wait", duration = t, timestamp = os.clock()})
     else
         addCode("wait()")
     end
@@ -577,30 +950,54 @@ env.wait = function(t)
 end
 
 env.delay = function(t, f)
-    addCode("delay(" .. (t or 0) .. ", function() end)")
-    if settings.performance_tracking then
-        table.insert(performanceMetrics, {
-            type = "delay",
-            duration = t,
-            timestamp = os.clock()
-        })
-    end
+    t = t or 0
+    addCode("delay(" .. t .. ", function() end)")
+    table.insert(performanceMetrics, {type = "delay", duration = t, timestamp = os.clock()})
+    if type(f) == "function" then pcall(f) end
     return 0
 end
 
 env.spawn = function(f)
-    pushStack("spawn")
+    pushCall("spawn")
     addCode("spawn(function() end)")
     if type(f) == "function" then
+        table.insert(performanceMetrics, {type = "spawn", timestamp = os.clock()})
         pcall(f)
     end
-    popStack()
+    popCall()
 end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- ENUM SYSTEM WITH CACHING
+-- TASK SYSTEM - COMPLETE
 -- ═══════════════════════════════════════════════════════════════════════
-local enumCache = {}
+env.task = {
+    spawn = function(func)
+        addCode("task.spawn(function() end)")
+        table.insert(performanceMetrics, {type = "task.spawn", timestamp = os.clock()})
+        if type(func) == "function" then pcall(func) end
+    end,
+    defer = function(func)
+        addCode("task.defer(function() end)")
+        if type(func) == "function" then pcall(func) end
+    end,
+    delay = function(duration, func)
+        duration = duration or 0
+        addCode("task.delay(" .. duration .. ", function() end)")
+        table.insert(performanceMetrics, {type = "task.delay", duration = duration, timestamp = os.clock()})
+        if type(func) == "function" then pcall(func) end
+    end,
+    wait = function(duration)
+        duration = duration or 0
+        addCode("task.wait(" .. duration .. ")")
+        table.insert(performanceMetrics, {type = "task.wait", duration = duration, timestamp = os.clock()})
+        return 0
+    end,
+    cancel = function(thread) end
+}
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- ENUM - FULL SYSTEM
+-- ═══════════════════════════════════════════════════════════════════════
 env.Enum = setmetatable({}, {
     __index = function(t, k)
         if not enumCache[k] then
@@ -617,442 +1014,91 @@ env.Enum = setmetatable({}, {
 })
 
 -- ═══════════════════════════════════════════════════════════════════════
--- PRINT & WARN WITH CALL LOGGING
--- ═══════════════════════════════════════════════════════════════════════
-env.print = function(...)
-    local args = {...}
-    local strs = {}
-    for i, v in ipairs(args) do
-        if type(v) == "string" then
-            strs[i] = '"' .. truncateString(tostring(v), 256) .. '"'
-        else
-            strs[i] = tostring(v)
-        end
-    end
-    addCode("print(" .. table.concat(strs, ", ") .. ")")
-    if settings.argument_logging then
-        table.insert(methodCalls, {
-            method = "print",
-            args = args,
-            argCount = #args,
-            timestamp = os.clock()
-        })
-    end
-end
-
-env.warn = function(...)
-    local args = {...}
-    local strs = {}
-    for i, v in ipairs(args) do
-        if type(v) == "string" then
-            strs[i] = '"' .. truncateString(tostring(v), 256) .. '"'
-        else
-            strs[i] = tostring(v)
-        end
-    end
-    addCode("warn(" .. table.concat(strs, ", ") .. ")")
-end
-
--- ═══════════════════════════════════════════════════════════════════════
--- GAME & SERVICES WITH COMPREHENSIVE TRACKING
--- ═══════════════════════════════════════════════════════════════════════
-env.game = setmetatable({}, {
-    __index = function(t, k)
-        if k == "GetService" then
-            return function(self, name)
-                if not serviceCache[name] then
-                    serviceCache[name] = createMockInstance(name, 'game:GetService("' .. name .. '")')
-                    
-                    if name == "Players" then
-                        serviceCache[name].LocalPlayer = createMockInstance("Player", "LocalPlayer")
-                        serviceCache[name].LocalPlayer.Character = createMockInstance("Character", "Character")
-                        serviceCache[name].LocalPlayer.CharacterAdded = createEvent()
-                        serviceCache[name].LocalPlayer.Humanoid = createMockInstance("Humanoid", "Humanoid")
-                        serviceCache[name].LocalPlayer.Backpack = createMockInstance("Backpack", "Backpack")
-                        serviceCache[name].PlayerAdded = createEvent()
-                        serviceCache[name].PlayerRemoving = createEvent()
-                        if settings.track_player_data then
-                            table.insert(methodCalls, {method = "GetService", service = "Players"})
-                        end
-                    elseif name == "TweenService" then
-                        serviceCache[name].Create = function(self, obj, info, props)
-                            addCode('TweenService:Create(...)')
-                            return setmetatable({}, {
-                                __index = {
-                                    Play = function() addCode("Tween:Play()") end,
-                                    Cancel = function() addCode("Tween:Cancel()") end,
-                                    Pause = function() addCode("Tween:Pause()") end,
-                                    Completed = createEvent()
-                                }
-                            })
-                        end
-                    elseif name == "TeleportService" then
-                        serviceCache[name].Teleport = function(self, placeId)
-                            addCode("TeleportService:Teleport(" .. placeId .. ")")
-                            table.insert(methodCalls, {
-                                method = "TeleportService:Teleport",
-                                placeId = placeId,
-                                timestamp = os.clock()
-                            })
-                        end
-                        serviceCache[name].TeleportToPlaceInstance = function(self, placeId, instanceId)
-                            addCode("TeleportService:TeleportToPlaceInstance(...)")
-                        end
-                    elseif name == "MarketplaceService" then
-                        serviceCache[name].PromptGamePassPurchase = function(self, player, passId)
-                            addCode("MarketplaceService:PromptGamePassPurchase(" .. player .. ", " .. passId .. ")")
-                            if settings.track_purchases then
-                                table.insert(methodCalls, {
-                                    method = "PromptGamePassPurchase",
-                                    passId = passId,
-                                    timestamp = os.clock()
-                                })
-                            end
-                        end
-                        serviceCache[name].PromptProductPurchase = function(self, player, productId)
-                            addCode("MarketplaceService:PromptProductPurchase(...)")
-                            if settings.track_purchases then
-                                table.insert(methodCalls, {
-                                    method = "PromptProductPurchase",
-                                    productId = productId,
-                                    timestamp = os.clock()
-                                })
-                            end
-                        end
-                        serviceCache[name].UserOwnsGamePassAsync = function(self, userId, passId)
-                            return true
-                        end
-                    elseif name == "HttpService" then
-                        serviceCache[name].PostAsync = function(self, url, data)
-                            addCode('HttpService:PostAsync("' .. url .. '", data)')
-                            if settings.track_http then
-                                table.insert(methodCalls, {
-                                    method = "HttpService:PostAsync",
-                                    url = url,
-                                    timestamp = os.clock()
-                                })
-                            end
-                        end
-                        serviceCache[name].GetAsync = function(self, url)
-                            addCode('HttpService:GetAsync("' .. url .. '")')
-                            if settings.track_http then
-                                table.insert(methodCalls, {
-                                    method = "HttpService:GetAsync",
-                                    url = url,
-                                    timestamp = os.clock()
-                                })
-                            end
-                        end
-                        serviceCache[name].RequestAsync = function(self, options)
-                            if type(options) == "table" and options.Url then
-                                addCode('HttpService:RequestAsync({Url = "' .. options.Url .. '"})')
-                                if settings.track_http then
-                                    table.insert(methodCalls, {
-                                        method = "HttpService:RequestAsync",
-                                        url = options.Url,
-                                        timestamp = os.clock()
-                                    })
-                                end
-                            end
-                        end
-                        serviceCache[name].JSONEncode = function(self, t)
-                            return "{}"
-                        end
-                        serviceCache[name].JSONDecode = function(self, s)
-                            return {}
-                        end
-                    elseif name == "RunService" then
-                        serviceCache[name].RenderStepped = createEvent()
-                        serviceCache[name].Stepped = createEvent()
-                        serviceCache[name].Heartbeat = createEvent()
-                        serviceCache[name].IsClient = function() return true end
-                        serviceCache[name].IsServer = function() return false end
-                    elseif name == "UserInputService" then
-                        serviceCache[name].InputBegan = createEvent()
-                        serviceCache[name].InputEnded = createEvent()
-                        serviceCache[name].InputChanged = createEvent()
-                        serviceCache[name].GetMouseLocation = function() return {X = 0, Y = 0} end
-                        serviceCache[name].IsKeyDown = function(self, key) return false end
-                    elseif name == "ContextActionService" then
-                        serviceCache[name].BindAction = function(self, actionName, func, createTouchButton, ...)
-                            addCode('ContextActionService:BindAction("' .. actionName .. '", ...)')
-                        end
-                        serviceCache[name].UnbindAction = function(self, actionName)
-                            addCode('ContextActionService:UnbindAction("' .. actionName .. '")')
-                        end
-                    elseif name == "CollectionService" then
-                        serviceCache[name].AddTag = function(self, instance, tag)
-                            addCode('CollectionService:AddTag(...)')
-                        end
-                        serviceCache[name].RemoveTag = function(self, instance, tag)
-                            addCode('CollectionService:RemoveTag(...)')
-                        end
-                        serviceCache[name].HasTag = function(self, instance, tag)
-                            return false
-                        end
-                        serviceCache[name].GetTagged = function(self, tag)
-                            return {}
-                        end
-                    end
-                end
-                return serviceCache[name]
-            end
-        end
-        if k == "HttpGet" or k == "HttpGetAsync" then
-            return env.HttpGet
-        end
-        return createEvent()
-    end,
-    __tostring = function() return "game" end
-})
-
-env.workspace = createMockInstance("Workspace", "workspace")
-env.script = createMockInstance("Script", "script")
-
--- ═══════════════════════════════════════════════════════════════════════
--- HTTP FUNCTIONS WITH URL TRACKING
--- ═══════════════════════════════════════════════════════════════════════
-local function createMockResponse(body)
-    return {
-        Body = body or "Mock Response",
-        StatusCode = 200,
-        StatusMessage = "OK",
-        Headers = {["Content-Type"] = "application/json"},
-        Success = true
-    }
-end
-
-env.HttpGet = function(url)
-    url = tostring(url)
-    addCode('HttpGet("' .. url .. '")')
-    if settings.track_http then
-        table.insert(methodCalls, {
-            method = "HttpGet",
-            url = url,
-            timestamp = os.clock()
-        })
-    end
-    return "Mock Response"
-end
-
-env.HttpGetAsync = env.HttpGet
-
-env.request = function(options)
-    local url = type(options) == "table" and options.Url or tostring(options)
-    local method = type(options) == "table" and options.Method or "GET"
-    addCode('request({Url = "' .. url .. '", Method = "' .. method .. '"})')
-    if settings.track_http then
-        table.insert(methodCalls, {
-            method = "request",
-            url = url,
-            httpMethod = method,
-            timestamp = os.clock()
-        })
-    end
-    return createMockResponse()
-end
-
-env.http_request = env.request
-env.syn = { request = env.request }
-
--- ═══════════════════════════════════════════════════════════════════════
--- FILE OPERATIONS WITH TRACKING
--- ═══════════════════════════════════════════════════════════════════════
-env.writefile = function(filename, content)
-    addCode('writefile("' .. filename .. '", [content])')
-    if settings.track_files then
-        table.insert(fileOperations, {
-            type = "write",
-            filename = filename,
-            size = #content,
-            timestamp = os.clock()
-        })
-    end
-end
-
-env.readfile = function(filename)
-    addCode('readfile("' .. filename .. '")')
-    if settings.track_files then
-        table.insert(fileOperations, {
-            type = "read",
-            filename = filename,
-            timestamp = os.clock()
-        })
-    end
-    return ""
-end
-
-env.isfile = function(filename) return true end
-
-env.delfile = function(filename)
-    addCode('delfile("' .. filename .. '")')
-    if settings.track_files then
-        table.insert(fileOperations, {
-            type = "delete",
-            filename = filename,
-            timestamp = os.clock()
-        })
-    end
-end
-
-env.listfiles = function(folder)
-    addCode('listfiles("' .. folder .. '")')
-    return {}
-end
-
-env.makefolder = function(folder)
-    addCode('makefolder("' .. folder .. '")')
-end
-
-env.delfolder = function(folder)
-    addCode('delfolder("' .. folder .. '")')
-end
-
--- ═══════════════════════════════════════════════════════════════════════
--- LOADSTRING WITH SOURCE TRACKING
+-- LOADSTRING - ENHANCED TRACKING
 -- ═══════════════════════════════════════════════════════════════════════
 env.loadstring = function(code, chunkname)
-    if settings.track_loadstring then
-        functionCounter = functionCounter + 1
-        local funcName = "loadstring_" .. functionCounter
-        
-        if settings.explore_funcs then
-            addCode("local " .. funcName .. ' = loadstring([[' .. truncateString(code, 150) .. ']])')
-            table.insert(trackedFunctions, {
-                name = funcName,
-                source = truncateString(code, 500),
-                chunkname = chunkname,
-                timestamp = os.clock()
-            })
-        else
-            addCode("loadstring([[code]])")
-        end
-    else
-        addCode("loadstring([[code]])")
-    end
-    
-    return function(...)
-        return nil
-    end
+    local codePreview = truncateString(code, 250)
+    addCode("local func = loadstring([[" .. codePreview .. "]])")
+    table.insert(callHistory, {
+        func = "loadstring",
+        codeLen = #code,
+        chunkname = chunkname,
+        codePreview = codePreview,
+        timestamp = os.clock()
+    })
+    return function(...) return nil end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- EXPLOIT ENVIRONMENT FUNCTIONS
+-- EXPLOIT FUNCTIONS - FULL DETECTION
 -- ═══════════════════════════════════════════════════════════════════════
 env.getgenv = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getgenv", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getgenv", timestamp = os.clock()})
     return env
 end
 
 env.getrenv = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getrenv", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getrenv", timestamp = os.clock()})
     return env
 end
 
 env.getreg = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getreg", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getreg", timestamp = os.clock()})
     return {}
 end
 
 env.getgc = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getgc", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getgc", timestamp = os.clock()})
     return {}
 end
 
 env.getinstances = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getinstances", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getinstances", timestamp = os.clock()})
     return {}
 end
 
 env.getnilinstances = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getnilinstances", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getnilinstances", timestamp = os.clock()})
     return {}
 end
 
 env.getloadedmodules = function()
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getloadedmodules", timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getloadedmodules", timestamp = os.clock()})
     return {}
 end
 
 env.getconnections = function(signal)
-    if settings.track_exploits then
-        table.insert(methodCalls, {method = "getconnections", signal = tostring(signal), timestamp = os.clock()})
-    end
+    table.insert(hookLog, {type = "getconnections", signal = tostring(signal), timestamp = os.clock()})
     return {}
 end
 
 env.firesignal = function(signal, ...)
     addCode("firesignal(...)")
-    if settings.track_movement or settings.track_signals then
-        table.insert(methodCalls, {
-            method = "firesignal",
-            signal = tostring(signal),
-            args = {...},
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "firesignal", signal = tostring(signal), timestamp = os.clock()})
 end
 
 env.fireclickdetector = function(part)
     addCode("fireclickdetector(" .. tostring(part) .. ")")
-    if settings.track_movement then
-        table.insert(methodCalls, {
-            method = "fireclickdetector",
-            part = tostring(part),
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "fireclickdetector", part = tostring(part), timestamp = os.clock()})
 end
 
 env.firetouchinterest = function(part, humanoidPart, state)
-    addCode("firetouchinterest(" .. tostring(part) .. ")")
-    if settings.track_movement then
-        table.insert(methodCalls, {
-            method = "firetouchinterest",
-            part = tostring(part),
-            timestamp = os.clock()
-        })
-    end
+    addCode("firetouchinterest(...)")
+    table.insert(hookLog, {type = "firetouchinterest", timestamp = os.clock()})
 end
 
 env.fireproximityprompt = function(prompt)
     addCode("fireproximityprompt(" .. tostring(prompt) .. ")")
-    if settings.track_movement then
-        table.insert(methodCalls, {
-            method = "fireproximityprompt",
-            prompt = tostring(prompt),
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "fireproximityprompt", timestamp = os.clock()})
 end
 
 env.setreadonly = function(t, val) end
 env.isreadonly = function(t) return false end
 
 env.setclipboard = function(text)
-    local preview = tostring(text):sub(1, 50)
+    local preview = truncateString(tostring(text), 50)
     addCode('setclipboard("' .. preview .. '")')
-    if settings.track_clipboard then
-        table.insert(methodCalls, {
-            method = "setclipboard",
-            dataPreview = preview,
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "setclipboard", preview = preview, timestamp = os.clock()})
 end
 
 env.checkcaller = function() return true end
@@ -1060,53 +1106,31 @@ env.newcclosure = function(f) return f end
 env.clonefunction = function(f) return f end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- HOOKING FUNCTIONS WITH TRACKING
+-- HOOKING - FULL INTERCEPT
 -- ═══════════════════════════════════════════════════════════════════════
 env.hookfunction = function(original, hook)
     addCode("hookfunction([function], [hook])")
-    if settings.track_hooks then
-        table.insert(methodCalls, {
-            method = "hookfunction",
-            original = type(original),
-            hook = type(hook),
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "hookfunction", timestamp = os.clock()})
     return original
 end
 
 env.hookmetamethod = function(obj, method, hook)
     addCode('hookmetamethod([obj], "' .. tostring(method) .. '", [hook])')
-    if settings.track_hooks then
-        table.insert(methodCalls, {
-            method = "hookmetamethod",
-            obj = tostring(obj),
-            method_name = method,
-            timestamp = os.clock()
-        })
-    end
+    table.insert(hookLog, {type = "hookmetamethod", method = method, timestamp = os.clock()})
     return function() end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════
--- DRAWING API WITH UI TRACKING
+-- DRAWING API
 -- ═══════════════════════════════════════════════════════════════════════
 env.Drawing = {
     new = function(drawingType)
         instanceCounter = instanceCounter + 1
         local varName = "Drawing" .. instanceCounter
         addCode('local ' .. varName .. ' = Drawing.new("' .. drawingType .. '")')
+        table.insert(callHistory, {func = "Drawing.new", type = drawingType, varName = varName, timestamp = os.clock()})
         
-        if settings.track_ui then
-            table.insert(methodCalls, {
-                method = "Drawing.new",
-                drawingType = drawingType,
-                varName = varName,
-                timestamp = os.clock()
-            })
-        end
-        
-        return setmetatable({__varName = varName}, {
+        return setmetatable({__varName = varName, __drawingType = drawingType}, {
             __index = function(t, k) return nil end,
             __newindex = function(t, k, v)
                 addCode(varName .. "." .. k .. " = " .. tostring(v))
@@ -1117,91 +1141,25 @@ env.Drawing = {
 }
 
 -- ═══════════════════════════════════════════════════════════════════════
--- TASK & COROUTINE WITH ADVANCED TRACKING
+-- COROUTINE - FULL SUPPORT
 -- ═══════════════════════════════════════════════════════════════════════
-env.task = {
-    wait = function(t)
-        addCode("task.wait(" .. (t or 0) .. ")")
-        if settings.track_tasks then
-            table.insert(methodCalls, {
-                method = "task.wait",
-                duration = t,
-                timestamp = os.clock()
-            })
-        end
-        return 0
-    end,
-    spawn = function(func)
-        pushStack("task.spawn")
-        addCode("task.spawn(function() end)")
-        if settings.track_tasks then
-            table.insert(methodCalls, {
-                method = "task.spawn",
-                timestamp = os.clock()
-            })
-        end
-        if type(func) == "function" then
-            pcall(func)
-        end
-        popStack()
-    end,
-    delay = function(t, func)
-        addCode("task.delay(" .. t .. ", function() end)")
-        if settings.track_tasks then
-            table.insert(methodCalls, {
-                method = "task.delay",
-                delay = t,
-                timestamp = os.clock()
-            })
-        end
-        if type(func) == "function" then
-            pcall(func)
-        end
-    end,
-    defer = function(func)
-        addCode("task.defer(function() end)")
-        if type(func) == "function" then
-            pcall(func)
-        end
-    end,
-    cancel = function(task) end
-}
-
 local original_coroutine = coroutine
 env.coroutine = setmetatable({}, {
     __index = function(t, k)
         if k == "create" then
             return function(func)
-                pushStack("coroutine.create")
                 addCode("coroutine.create(function() end)")
-                if settings.track_coroutines then
-                    table.insert(methodCalls, {
-                        method = "coroutine.create",
-                        timestamp = os.clock()
-                    })
-                end
-                popStack()
+                table.insert(callHistory, {func = "coroutine.create", timestamp = os.clock()})
                 return original_coroutine.create(func)
             end
         elseif k == "resume" then
             return function(co, ...)
                 addCode("coroutine.resume(...)")
-                if settings.track_coroutines then
-                    table.insert(methodCalls, {
-                        method = "coroutine.resume",
-                        timestamp = os.clock()
-                    })
-                end
+                table.insert(callHistory, {func = "coroutine.resume", timestamp = os.clock()})
                 return original_coroutine.resume(co, ...)
             end
         elseif k == "yield" then
             return function(...)
-                if settings.track_coroutines then
-                    table.insert(methodCalls, {
-                        method = "coroutine.yield",
-                        timestamp = os.clock()
-                    })
-                end
                 return original_coroutine.yield(...)
             end
         elseif k == "running" then
@@ -1212,8 +1170,99 @@ env.coroutine = setmetatable({}, {
             return function(co)
                 return original_coroutine.status(co)
             end
+        elseif k == "wrap" then
+            return function(func)
+                return original_coroutine.wrap(func)
+            end
         else
             return original_coroutine[k]
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- MATH INTERCEPTION WITH HOOKOP
+-- ═══════════════════════════════════════════════════════════════════════
+local original_math = math
+env.math = setmetatable({}, {
+    __index = function(t, k)
+        if k == "abs" then
+            return function(x)
+                if settings.hookop_enabled then
+                    logOperation("math.abs", x, nil, math.abs(x))
+                end
+                return original_math.abs(x)
+            end
+        elseif k == "floor" then
+            return function(x)
+                if settings.hookop_enabled then
+                    logOperation("math.floor", x, nil, math.floor(x))
+                end
+                return original_math.floor(x)
+            end
+        elseif k == "ceil" then
+            return function(x)
+                if settings.hookop_enabled then
+                    logOperation("math.ceil", x, nil, math.ceil(x))
+                end
+                return original_math.ceil(x)
+            end
+        elseif k == "sqrt" then
+            return function(x)
+                if settings.hookop_enabled then
+                    logOperation("math.sqrt", x, nil, math.sqrt(x))
+                end
+                return original_math.sqrt(x)
+            end
+        else
+            return original_math[k]
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- TABLE INTERCEPTION
+-- ═══════════════════════════════════════════════════════════════════════
+local original_table = table
+env.table = setmetatable({}, {
+    __index = function(t, k)
+        if k == "insert" then
+            return function(tbl, ...)
+                table.insert(callHistory, {func = "table.insert", timestamp = os.clock()})
+                return original_table.insert(tbl, ...)
+            end
+        elseif k == "remove" then
+            return function(tbl, ...)
+                table.insert(callHistory, {func = "table.remove", timestamp = os.clock()})
+                return original_table.remove(tbl, ...)
+            end
+        elseif k == "concat" then
+            return function(tbl, ...)
+                return original_table.concat(tbl, ...)
+            end
+        else
+            return original_table[k]
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- STRING INTERCEPTION
+-- ═══════════════════════════════════════════════════════════════════════
+local original_string = string
+env.string = setmetatable({}, {
+    __index = function(t, k)
+        if k == "sub" then
+            return function(str, i, j)
+                table.insert(callHistory, {func = "string.sub", timestamp = os.clock()})
+                return original_string.sub(str, i, j)
+            end
+        elseif k == "byte" then
+            return function(str, ...)
+                return original_string.byte(str, ...)
+            end
+        else
+            return original_string[k]
         end
     end
 })
@@ -1224,18 +1273,22 @@ env.coroutine = setmetatable({}, {
 env.type = type
 env.typeof = type
 env.tostring = tostring
-env.tonumber = tonumber
+
+env.tonumber = function(v)
+    if settings.hookop_enabled then
+        local result = tonumber(v)
+        if result then
+            return createTrackedNumber(result)
+        end
+    end
+    return tonumber(v)
+end
+
 env.pairs = pairs
 env.ipairs = ipairs
 env.next = next
 env.pcall = function(func, ...)
-    if settings.track_coroutines then
-        table.insert(methodCalls, {
-            method = "pcall",
-            func = type(func),
-            timestamp = os.clock()
-        })
-    end
+    table.insert(callHistory, {func = "pcall", timestamp = os.clock()})
     return pcall(func, ...)
 end
 env.xpcall = xpcall
@@ -1244,17 +1297,7 @@ env.error = error
 env.select = select
 env.unpack = unpack
 env.getmetatable = getmetatable
-env.setmetatable = function(t, mt)
-    if settings.track_metamethods then
-        table.insert(methodCalls, {
-            method = "setmetatable",
-            table = type(t),
-            metatable = type(mt),
-            timestamp = os.clock()
-        })
-    end
-    return setmetatable(t, mt)
-end
+env.setmetatable = setmetatable
 env.rawget = rawget
 env.rawset = rawset
 env.rawequal = rawequal
@@ -1262,90 +1305,12 @@ env.rawequal = rawequal
 -- ═══════════════════════════════════════════════════════════════════════
 -- LIBRARIES
 -- ═══════════════════════════════════════════════════════════════════════
-env.math = math
-env.table = table
-env.string = string
-env.coroutine = coroutine
 env.os = os
 env.bit32 = bit32
 env.utf8 = utf8
 
 -- ═══════════════════════════════════════════════════════════════════════
--- OPERATION TRACKING (HOOKOP)
--- ═══════════════════════════════════════════════════════════════════════
-if settings.hookOp then
-    local function createTrackedNumber(value)
-        return setmetatable({__value = value}, {
-            __add = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av + bv)
-            end,
-            __sub = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av - bv)
-            end,
-            __mul = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av * bv)
-            end,
-            __div = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av / bv)
-            end,
-            __mod = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av % bv)
-            end,
-            __pow = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return createTrackedNumber(av ^ bv)
-            end,
-            __unm = function(a)
-                local av = type(a) == "table" and a.__value or a
-                return createTrackedNumber(-av)
-            end,
-            __eq = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return av == bv
-            end,
-            __lt = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return av < bv
-            end,
-            __le = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                return av <= bv
-            end,
-            __tostring = function(self)
-                return tostring(self.__value)
-            end,
-            __tonumber = function(self)
-                return self.__value
-            end
-        })
-    end
-    
-    local original_tonumber = env.tonumber
-    env.tonumber = function(...)
-        local result = original_tonumber(...)
-        if result then
-            return createTrackedNumber(result)
-        end
-        return result
-    end
-end
-
--- ═══════════════════════════════════════════════════════════════════════
--- ENVIRONMENT & GLOBALS
+-- ENVIRONMENT
 -- ═══════════════════════════════════════════════════════════════════════
 env._G = env
 env.shared = {}
@@ -1360,20 +1325,11 @@ setmetatable(env, {
 })
 
 -- ═══════════════════════════════════════════════════════════════════════
--- SCRIPT EXECUTION WITH ERROR HANDLING
+-- SCRIPT EXECUTION
 -- ═══════════════════════════════════════════════════════════════════════
-captureSnapshot("execution_start")
-
 local chunk, err = loadstring(scriptContent, "@script")
 if not chunk then
-    if settings.preserve_errors then
-        table.insert(errorLog, {
-            type = "parse_error",
-            message = tostring(err),
-            timestamp = os.clock()
-        })
-    end
-    error("Parse error: " .. tostring(err))
+    print("Error: " .. tostring(err))
     process.exit(1)
 end
 
@@ -1381,13 +1337,7 @@ setfenv(chunk, env)
 local success, result = pcall(chunk)
 
 if not success then
-    if settings.preserve_errors then
-        table.insert(errorLog, {
-            type = "runtime_error",
-            message = tostring(result),
-            timestamp = os.clock()
-        })
-    end
+    table.insert(errorTracker, {type = "runtime_error", message = tostring(result), timestamp = os.clock()})
 end
 
 if success and type(result) == "function" then
@@ -1395,18 +1345,13 @@ if success and type(result) == "function" then
     pcall(result)
 end
 
-captureSnapshot("execution_end")
-
 -- ═══════════════════════════════════════════════════════════════════════
--- OUTPUT: RAW RECONSTRUCTED CODE ONLY
+-- OUTPUT - PURE RAW CODE ONLY
 -- ═══════════════════════════════════════════════════════════════════════
 for _, line in ipairs(codeLines) do
     print(line)
 end
 
--- ═══════════════════════════════════════════════════════════════════════
--- OPTIONAL: SAVE TO FILE
--- ═══════════════════════════════════════════════════════════════════════
 if settings.output_file then
     local output_content = table.concat(codeLines, "\n")
     fs.writeFile(settings.output_file, output_content)
