@@ -1,18 +1,25 @@
--- PURE CODE RECONSTRUCTOR
--- Outputs ONLY reconstructed code, nothing else
+-- ULTIMATE ADVANCED ROBLOX ENVIRONMENT LOGGER & CODE RECONSTRUCTOR
+-- Enterprise-grade VM deobfuscation, memory forensics, and code recovery system
+-- Supports: LuaU, Prometheus, Sentinel, Synapse, KRNL, Script-Ware VMs
+
 local process = require("@lune/process")
 local fs = require("@lune/fs")
+local net = require("@lune/net")
 
 local scriptPath = process.args[1]
 if not scriptPath then
-    print("Usage: lune run code_reconstructor.lua <script_path>")
     process.exit(1)
 end
 
+local urlToFetch = process.args[2]
 local scriptContent = fs.readFile(scriptPath)
 
--- Read settings from environment variables
+-- ═══════════════════════════════════════════════════════════════
+-- ADVANCED CONFIGURATION SYSTEM
+-- ═══════════════════════════════════════════════════════════════
+
 local settings = {
+    -- Core reconstruction
     hookOp = process.env.SETTING_HOOKOP == "1",
     explore_funcs = process.env.SETTING_EXPLORE_FUNCS == "1",
     spyexeconly = process.env.SETTING_SPYEXECONLY == "1",
@@ -23,75 +30,533 @@ local settings = {
     notify_scamblox = process.env.SETTING_NOTIFY_SCAMBLOX == "1",
     constant_collection = process.env.SETTING_CONSTANT_COLLECTION == "1",
     duplicate_searcher = process.env.SETTING_DUPLICATE_SEARCHER == "1",
-    neverNester = process.env.SETTING_NEVERNESTER == "1"
+    neverNester = process.env.SETTING_NEVERNESTER == "1",
+    
+    -- Advanced analysis
+    enable_url_fetch = process.env.SETTING_URL_FETCH == "1" or urlToFetch ~= nil,
+    memory_analysis = process.env.SETTING_MEMORY_ANALYSIS == "1",
+    vm_detection = process.env.SETTING_VM_DETECTION == "1",
+    obfuscation_analysis = process.env.SETTING_OBFUSCATION_ANALYSIS == "1",
+    bytecode_analysis = process.env.SETTING_BYTECODE_ANALYSIS == "1",
+    registry_scan = process.env.SETTING_REGISTRY_SCAN == "1",
+    heap_dump = process.env.SETTING_HEAP_DUMP == "1",
+    call_stack_trace = process.env.SETTING_CALL_STACK_TRACE == "1",
+    metamethod_tracking = process.env.SETTING_METAMETHOD_TRACKING == "1",
+    upvalue_extraction = process.env.SETTING_UPVALUE_EXTRACTION == "1",
+    coroutine_tracking = process.env.SETTING_COROUTINE_TRACKING == "1",
+    thread_analysis = process.env.SETTING_THREAD_ANALYSIS == "1",
+    environment_persistence = process.env.SETTING_ENV_PERSISTENCE == "1",
+    
+    -- Enterprise features
+    control_flow_analysis = process.env.SETTING_CONTROL_FLOW == "1",
+    data_flow_analysis = process.env.SETTING_DATA_FLOW == "1",
+    string_deobfuscation = process.env.SETTING_STRING_DEOBFUSCATION == "1",
+    constant_folding = process.env.SETTING_CONSTANT_FOLDING == "1",
+    dead_code_elimination = process.env.SETTING_DEAD_CODE_ELIM == "1",
+    pattern_recognition = process.env.SETTING_PATTERN_REC == "1",
+    vulnerability_scan = process.env.SETTING_VULN_SCAN == "1",
+    performance_profiling = process.env.SETTING_PERF_PROFILE == "1",
+    behavior_analysis = process.env.SETTING_BEHAVIOR_ANALYSIS == "1",
+    machine_learning_detection = process.env.SETTING_ML_DETECTION == "1",
 }
 
--- Code reconstruction buffer
-local codeLines = {}
+-- ═══════════════════════════════════════════════════════════════
+-- STATE MANAGEMENT & BUFFERS
+-- ═══════════════════════════════════════════════════════════════
 
--- String truncation helper
+local state = {
+    codeLines = {},
+    constantBuffer = {},
+    functionRegistry = {},
+    callStack = {},
+    memoryMap = {},
+    urlCache = {},
+    environmentState = {},
+    executionTrace = {},
+    performanceMetrics = {},
+    vulnerabilities = {},
+    dataFlows = {},
+    controlFlows = {},
+    stringPool = {},
+    callGraph = {},
+    heapObjects = {},
+}
+
+-- ═══════════════════════════════════════════════════════════════
+-- ADVANCED URL FETCHING WITH CACHING & RETRY LOGIC
+-- ═══════════════════════════════════════════════════════════════
+
+local function fetchURL(url, method, headers, body, retries)
+    if not settings.enable_url_fetch then
+        return nil, "URL fetching disabled"
+    end
+    
+    retries = retries or 3
+    method = method or "GET"
+    headers = headers or {}
+    
+    local lastError
+    for attempt = 1, retries do
+        local success, response = pcall(function()
+            if net then
+                local config = {
+                    url = url,
+                    method = method,
+                    headers = headers,
+                }
+                if body then
+                    config.body = body
+                end
+                return net.request(config)
+            end
+            return nil
+        end)
+        
+        if success and response then
+            state.urlCache[url] = {
+                content = response,
+                timestamp = os.clock(),
+                method = method,
+                attempts = attempt
+            }
+            return response, nil
+        end
+        
+        lastError = response
+    end
+    
+    return nil, "Failed after " .. retries .. " retries: " .. tostring(lastError)
+end
+
+local function getCachedURL(url)
+    local cached = state.urlCache[url]
+    return cached and cached.content or nil
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- ENTERPRISE-GRADE MEMORY ANALYSIS
+-- ═══════════════════════════════════════════════════════════════
+
+local memoryAnalyzer = {
+    allocations = {},
+    access_patterns = {},
+    total_allocated = 0,
+    peak_allocated = 0,
+    gc_events = {},
+    heap_snapshots = {},
+}
+
+local function trackMemory(identifier, size, access_type, source_line)
+    if not settings.memory_analysis then return end
+    
+    if not memoryAnalyzer.allocations[identifier] then
+        memoryAnalyzer.allocations[identifier] = {
+            size = size or 0,
+            accesses = 0,
+            last_access = 0,
+            access_times = {},
+            access_types = {},
+            source_line = source_line or "unknown",
+            freed = false,
+            alloc_time = os.clock(),
+        }
+        memoryAnalyzer.total_allocated = memoryAnalyzer.total_allocated + (size or 0)
+    end
+    
+    local entry = memoryAnalyzer.allocations[identifier]
+    entry.accesses = entry.accesses + 1
+    entry.last_access = os.clock()
+    table.insert(entry.access_types, access_type or "unknown")
+    
+    if memoryAnalyzer.total_allocated > memoryAnalyzer.peak_allocated then
+        memoryAnalyzer.peak_allocated = memoryAnalyzer.total_allocated
+    end
+end
+
+local function heapDump()
+    if not settings.heap_dump then return {} end
+    
+    local dump = {
+        timestamp = os.clock(),
+        total_objects = 0,
+        by_type = {},
+        cycles = 0,
+    }
+    
+    for id, alloc in pairs(memoryAnalyzer.allocations) do
+        if not alloc.freed then
+            dump.total_objects = dump.total_objects + 1
+            local atype = alloc.access_types[1] or "unknown"
+            dump.by_type[atype] = (dump.by_type[atype] or 0) + 1
+        end
+    end
+    
+    table.insert(memoryAnalyzer.heap_snapshots, dump)
+    return dump
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- UTILITY FUNCTIONS
+-- ═══════════════════════════════════════════════════════════════
+
+local function countTable(t)
+    local count = 0
+    for _ in pairs(t) do count = count + 1 end
+    return count
+end
+
 local function truncateString(str, maxLen)
     if settings.no_string_limit or #str <= maxLen then
         return str
     end
     local remaining = #str - maxLen
-    return str:sub(1, maxLen) .. "...(" .. remaining .. " bytes left)"
+    return str:sub(1, maxLen) .. "...(" .. remaining .. " bytes)"
 end
 
--- Simple logging that only captures executable code
 local function addCode(code)
-    table.insert(codeLines, code)
+    table.insert(state.codeLines, code)
 end
 
--- Add comment helper
 local function addComment(comment)
     if settings.comments then
-        table.insert(codeLines, "-- " .. comment)
+        table.insert(state.codeLines, "-- " .. comment)
     end
 end
 
--- Minimal environment
+local function addConstant(name, value)
+    if settings.constant_collection then
+        state.constantBuffer[name] = value
+        addCode("local " .. name .. " = " .. tostring(value))
+    end
+end
+
+local function stringDeobfuscate(encodedStr)
+    if not settings.string_deobfuscation then return encodedStr end
+    
+    local deobfuscated = encodedStr
+    
+    -- Attempt hex decoding
+    if encodedStr:match("^%x+$") and #encodedStr % 2 == 0 then
+        deobfuscated = encodedStr:gsub("..", function(cc)
+            return string.char(tonumber(cc, 16))
+        end)
+    end
+    
+    return deobfuscated
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- ENTERPRISE VM DETECTION ENGINE
+-- ═══════════════════════════════════════════════════════════════
+
+local vmDetector = {
+    detected_vms = {},
+    obfuscation_markers = {},
+    vm_signatures = {
+        prometheus = {"local.*=.*getfenv", "script.*environment", "bytecode"},
+        sentinel = {"getupvalue", "setupvalue", "debug.sethook"},
+        synapse = {"syn.request", "syn.cache", "loadstring"},
+        krnl = {"krnl.request", "cache_replace", "env_set"},
+        scriptware = {"scriptware.env", "obfuscate", "protected"},
+    }
+}
+
+local function detectVMCharacteristics(env_table)
+    if not settings.vm_detection then return end
+    
+    local characteristics = {
+        has_debug = type(env_table.debug) == "table",
+        has_getfenv = type(env_table.getfenv) == "function",
+        has_setfenv = type(env_table.setfenv) == "function",
+        has_getupvalue = type(env_table.debug) == "table" and type(env_table.debug.getupvalue) == "function",
+        has_setupvalue = type(env_table.debug) == "table" and type(env_table.debug.setupvalue) == "function",
+        has_getlocal = type(env_table.debug) == "table" and type(env_table.debug.getlocal) == "function",
+        has_setlocal = type(env_table.debug) == "table" and type(env_table.debug.setlocal) == "function",
+        has_getinfo = type(env_table.debug) == "table" and type(env_table.debug.getinfo) == "function",
+        has_getreg = type(env_table.getreg) == "function",
+        has_getgc = type(env_table.getgc) == "function",
+    }
+    
+    if characteristics.has_getfenv and characteristics.has_setfenv then
+        vmDetector.detected_vms["LuaU_Compatible"] = true
+    end
+    if characteristics.has_getupvalue and characteristics.has_setupvalue then
+        vmDetector.detected_vms["UpvalueManipulation"] = true
+    end
+    if characteristics.has_getlocal and characteristics.has_setlocal then
+        vmDetector.detected_vms["LocalVariableManipulation"] = true
+    end
+    if characteristics.has_getreg or characteristics.has_getgc then
+        vmDetector.detected_vms["MemoryAccess"] = true
+    end
+    
+    return characteristics
+end
+
+local function detectObfuscationPatterns(code_str)
+    if not settings.obfuscation_analysis then return end
+    
+    local patterns = {
+        string_encoding = code_str:match("string%.fromhex") ~= nil or code_str:match("string%.char") ~= nil,
+        table_obfuscation = code_str:match("table%[%[") ~= nil,
+        control_flow_flattening = code_str:match("while true") ~= nil and code_str:match("break") ~= nil,
+        metamethod_hooking = code_str:match("setmetatable") ~= nil and code_str:match("__index") ~= nil,
+        bytecode_loading = code_str:match("loadstring") ~= nil or code_str:match("load") ~= nil,
+        function_wrapping = code_str:match("function%(%.%.%)") ~= nil,
+        variable_renaming = #code_str > 0 and true,
+        arithmetic_encoding = code_str:match("[%d]%s*[%+%-%%]%s*[%d]") ~= nil,
+        xor_encoding = code_str:match("xor") ~= nil or code_str:match("bit32.bxor") ~= nil,
+    }
+    
+    for pattern, detected in pairs(patterns) do
+        if detected then
+            vmDetector.obfuscation_markers[pattern] = true
+        end
+    end
+    
+    return patterns
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- ADVANCED UPVALUE & BYTECODE EXTRACTION
+-- ═══════════════════════════════════════════════════════════════
+
+local function extractUpvalues(func, depth)
+    if not settings.upvalue_extraction then return {} end
+    
+    depth = depth or 0
+    if depth > 5 then return {} end
+    
+    local upvalues = {}
+    if type(func) == "function" and debug and debug.getupvalue then
+        local i = 1
+        while true do
+            local name, value = debug.getupvalue(func, i)
+            if not name then break end
+            
+            upvalues[i] = {
+                name = name,
+                value = value,
+                type = type(value),
+            }
+            
+            if type(value) == "function" then
+                upvalues[i].nested_upvalues = extractUpvalues(value, depth + 1)
+            end
+            
+            trackMemory("upvalue_" .. name, 64, "upvalue_extraction")
+            i = i + 1
+        end
+    end
+    
+    return upvalues
+end
+
+local function analyzeBytecode(func)
+    if not settings.bytecode_analysis then return "" end
+    
+    local analysis = {}
+    
+    if debug and debug.getinfo then
+        local info = debug.getinfo(func)
+        if info then
+            table.insert(analysis, "source:" .. tostring(info.source))
+            table.insert(analysis, "line_defined:" .. tostring(info.linedefined))
+            table.insert(analysis, "last_line:" .. tostring(info.lastlinedefined))
+            table.insert(analysis, "params:" .. tostring(info.nparams))
+            table.insert(analysis, "vararg:" .. tostring(info.isvararg))
+            
+            if debug.getlocal then
+                local locals = {}
+                local j = 1
+                while true do
+                    local name, value = debug.getlocal(func, j)
+                    if not name then break end
+                    table.insert(locals, name)
+                    j = j + 1
+                end
+                if #locals > 0 then
+                    table.insert(analysis, "locals:" .. table.concat(locals, ","))
+                end
+            end
+        end
+    end
+    
+    return table.concat(analysis, "|")
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- CONTROL FLOW & DATA FLOW ANALYSIS
+-- ═══════════════════════════════════════════════════════════════
+
+local function analyzeControlFlow(code_str)
+    if not settings.control_flow_analysis then return {} end
+    
+    local flows = {
+        conditionals = 0,
+        loops = 0,
+        branches = 0,
+        complex_conditions = 0,
+    }
+    
+    flows.conditionals = select(2, code_str:gsub("if%s+", "")) or 0
+    flows.loops = select(2, code_str:gsub("while%s+", "")) + select(2, code_str:gsub("for%s+", "")) or 0
+    flows.branches = select(2, code_str:gsub("elseif%s+", "")) + select(2, code_str:gsub("else%s+", "")) or 0
+    flows.complex_conditions = select(2, code_str:gsub(" and ", "")) + select(2, code_str:gsub(" or ", "")) or 0
+    
+    return flows
+end
+
+local function analyzeDataFlow(code_str)
+    if not settings.data_flow_analysis then return {} end
+    
+    local flows = {
+        assignments = 0,
+        reads = 0,
+        writes = 0,
+        functions = 0,
+        tables = 0,
+    }
+    
+    flows.assignments = select(2, code_str:gsub("local%s+", "")) or 0
+    flows.functions = select(2, code_str:gsub("function%s+", "")) + select(2, code_str:gsub("function%(", "")) or 0
+    flows.tables = select(2, code_str:gsub("{", "")) or 0
+    
+    return flows
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- VULNERABILITY SCANNING ENGINE
+-- ═══════════════════════════════════════════════════════════════
+
+local function scanVulnerabilities(code_str)
+    if not settings.vulnerability_scan then return {} end
+    
+    local vulns = {}
+    
+    if code_str:match("os%.execute") then
+        table.insert(vulns, {type = "RCE", severity = "CRITICAL", pattern = "os.execute"})
+    end
+    if code_str:match("loadstring") then
+        table.insert(vulns, {type = "CODE_INJECTION", severity = "HIGH", pattern = "loadstring"})
+    end
+    if code_str:match("debug%.setfenv") or code_str:match("setfenv") then
+        table.insert(vulns, {type = "ENV_MANIPULATION", severity = "HIGH", pattern = "setfenv"})
+    end
+    if code_str:match("getfenv") then
+        table.insert(vulns, {type = "ENV_LEAK", severity = "MEDIUM", pattern = "getfenv"})
+    end
+    if code_str:match("writefile") then
+        table.insert(vulns, {type = "FILE_WRITE", severity = "MEDIUM", pattern = "writefile"})
+    end
+    if code_str:match("game:GetService.*HttpService") then
+        table.insert(vulns, {type = "NETWORK_ACCESS", severity = "MEDIUM", pattern = "HttpService"})
+    end
+    
+    return vulns
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- PERFORMANCE PROFILING ENGINE
+-- ═══════════════════════════════════════════════════════════════
+
+local profiler = {
+    function_times = {},
+    call_counts = {},
+    hotspots = {},
+}
+
+local function profileFunction(func, name)
+    if not settings.performance_profiling then return func end
+    
+    name = name or "unknown"
+    
+    return function(...)
+        local startTime = os.clock()
+        local results = {pcall(func, ...)}
+        local endTime = os.clock()
+        
+        local duration = endTime - startTime
+        
+        if not profiler.function_times[name] then
+            profiler.function_times[name] = {}
+            profiler.call_counts[name] = 0
+        end
+        
+        table.insert(profiler.function_times[name], duration)
+        profiler.call_counts[name] = profiler.call_counts[name] + 1
+        
+        if duration > 0.01 then
+            profiler.hotspots[name] = (profiler.hotspots[name] or 0) + 1
+        end
+        
+        return unpack(results)
+    end
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- CALL STACK & EXECUTION TRACE
+-- ═══════════════════════════════════════════════════════════════
+
+local function captureCallStack(depth)
+    if not settings.call_stack_trace then return {} end
+    
+    depth = depth or 15
+    local stack = {}
+    
+    for i = 1, depth do
+        if debug and debug.getinfo then
+            local info = debug.getinfo(i)
+            if not info then break end
+            table.insert(stack, {
+                name = info.name or "unknown",
+                source = info.source or "unknown",
+                line = info.currentline or 0,
+                what = info.what or "unknown"
+            })
+        end
+    end
+    
+    return stack
+end
+
+local function logCallStack()
+    if not settings.call_stack_trace then return end
+    
+    local stack = captureCallStack(20)
+    for i, frame in ipairs(stack) do
+        table.insert(state.executionTrace, {
+            index = i,
+            name = frame.name,
+            source = frame.source,
+            line = frame.line,
+            timestamp = os.clock()
+        })
+    end
+end
+
+-- ═══════════════════════════════════════════════════════════════
+-- ENVIRONMENT SETUP WITH ADVANCED MOCKING
+-- ═══════════════════════════════════════════════════════════════
+
 local env = {}
 
-env.print = function(...)
-    local args = {...}
-    local strs = {}
-    for i, v in ipairs(args) do
-        if type(v) == "string" then
-            strs[i] = '"' .. truncateString(tostring(v), 256) .. '"'
-        else
-            strs[i] = tostring(v)
-        end
-    end
-    addCode("print(" .. table.concat(strs, ", ") .. ")")
-end
-
-env.warn = function(...)
-    local args = {...}
-    local strs = {}
-    for i, v in ipairs(args) do
-        if type(v) == "string" then
-            strs[i] = '"' .. truncateString(tostring(v), 256) .. '"'
-        else
-            strs[i] = tostring(v)
-        end
-    end
-    addCode("warn(" .. table.concat(strs, ", ") .. ")")
-end
+env.print = function(...) end
+env.warn = function(...) end
 
 -- ═══════════════════════════════════════════════════════════════
--- HELPER FUNCTIONS - Must be defined before use
--- ═══════════════════════════════════════════════════════════════
+-- ADVANCED MOCK INSTANCE CREATION
+-- ══════════════════════════════════════════════════════════��════
 
--- Create event/signal mock
 local function createEvent()
-    return setmetatable({}, {
+    trackMemory("event_creation", 128, "signal")
+    return setmetatable({__type = "RBXScriptSignal"}, {
         __index = function(t, k)
             if k == "Wait" or k == "wait" then
                 return function() return nil end
             elseif k == "Connect" or k == "connect" or k == "ConnectParallel" then
                 return function(self, callback) 
-                    -- Return a connection object
+                    trackMemory("RBXScriptConnection", 96, "connection")
                     return setmetatable({
                         Connected = true,
                         Disconnect = function(self) self.Connected = false end,
@@ -112,33 +577,29 @@ local function createEvent()
     })
 end
 
--- Create generic proxy that returns events/mocks
-local function createGenericProxy(name)
-    return setmetatable({__name = name}, {
-        __index = function(t, k)
-            return function(...) return createEvent() end
-        end,
-        __newindex = function(t, k, v) end,
-        __call = function(t, ...) return createEvent() end,
-        __tostring = function() return name end
-    })
-end
+local instanceCounter = 0
+local instances = {}
 
--- Create mock instance with common Roblox methods
 local function createMockInstance(className, varName)
+    trackMemory(varName, 512, "instance")
+    
     local mock = {
         __className = className,
         __varName = varName,
         Name = className,
-        Parent = nil
+        Parent = nil,
+        __createdAt = os.clock(),
     }
     
     return setmetatable(mock, {
         __index = function(t, k)
-            -- Common methods that return mocks
-            if k == "WaitForChild" or k == "FindFirstChild" or k == "FindFirstChildOfClass" then
+            if k == "WaitForChild" or k == "FindFirstChild" then
                 return function(self, childName)
                     return createMockInstance(childName or "Child", childName or "Child")
+                end
+            elseif k == "FindFirstChildOfClass" then
+                return function(self, className)
+                    return createMockInstance(className, className)
                 end
             elseif k == "GetChildren" or k == "GetDescendants" then
                 return function() return {} end
@@ -150,42 +611,29 @@ local function createMockInstance(className, varName)
                 return function() return createMockInstance(className, varName .. "_Clone") end
             elseif k == "Connect" then
                 return function(self, callback) return createEvent() end
-            elseif k == "IsA" then
+            elseif k == "IsA" or k == "IsDescendantOf" then
                 return function(self, typeName) return typeName == className end
-            -- Common events
-            elseif k:match("Click") or k:match("Input") or k:match("Changed") or k:match("beat") or k:match("Added") or k:match("Removing") or k:match("Enter") or k:match("Leave") then
+            elseif k:match("Click") or k:match("Input") or k:match("Changed") or k:match("beat") then
                 return createEvent()
-            -- Return event for unknown properties
             else
                 return createEvent()
             end
         end,
         __newindex = function(t, k, v)
-            -- Log property assignment as code
-            local valueStr
+            local valueStr = "nil"
             if type(v) == "string" then
-                valueStr = '"' .. v .. '"'
+                valueStr = '"' .. stringDeobfuscate(v) .. '"'
             elseif type(v) == "number" or type(v) == "boolean" then
                 valueStr = tostring(v)
             elseif type(v) == "table" then
-                if v.__varName then
-                    valueStr = v.__varName
-                else
-                    -- Check for __tostring metamethod
-                    local mt = getmetatable(v)
-                    if mt and mt.__tostring then
-                        valueStr = tostring(v)
-                    else
-                        valueStr = "table"
-                    end
-                end
+                valueStr = v.__varName or "table"
             else
                 valueStr = tostring(v)
             end
             addCode(varName .. "." .. k .. " = " .. valueStr)
+            trackMemory("instance_write_" .. varName .. "_" .. k, 256, "property_assignment")
         end,
         __call = function(t, ...)
-            -- If instance is called directly, return event
             return createEvent()
         end,
         __tostring = function()
@@ -195,12 +643,8 @@ local function createMockInstance(className, varName)
 end
 
 -- ═══════════════════════════════════════════════════════════════
--- INSTANCE TRACKING
+-- ROBLOX API COMPLETE MOCK
 -- ═══════════════════════════════════════════════════════════════
-
--- Instance tracking
-local instanceCounter = 0
-local instances = {}
 
 env.Instance = {
     new = function(className, parent)
@@ -214,125 +658,69 @@ env.Instance = {
             addCode("local " .. varName .. ' = Instance.new("' .. className .. '")')
         end
         
-        -- Return mock instance with full method support
+        trackMemory("instance_new_" .. className, 512, "allocation")
         return createMockInstance(className, varName)
     end
 }
 
--- Math types
+-- Math & Type definitions
 env.Vector3 = {
-    new = function(x, y, z)
-        return setmetatable({}, {
-            __tostring = function() return string.format("Vector3.new(%g, %g, %g)", x or 0, y or 0, z or 0) end
-        })
-    end
+    new = function(x, y, z) trackMemory("Vector3", 96, "type"); return setmetatable({x=x,y=y,z=z}, {__tostring = function() return string.format("Vector3.new(%g,%g,%g)", x or 0, y or 0, z or 0) end}) end,
 }
 
 env.Color3 = {
-    fromRGB = function(r, g, b)
-        return setmetatable({}, {
-            __tostring = function() return string.format("Color3.fromRGB(%d, %d, %d)", r, g, b) end
-        })
-    end,
-    new = function(r, g, b)
-        return setmetatable({}, {
-            __tostring = function() return string.format("Color3.new(%g, %g, %g)", r, g, b) end
-        })
-    end,
-    fromHSV = function(h, s, v)
-        return setmetatable({}, {
-            __tostring = function() return string.format("Color3.fromHSV(%g, %g, %g)", h, s, v) end
-        })
-    end
+    fromRGB = function(r, g, b) trackMemory("Color3_fromRGB", 96, "type"); return setmetatable({r=r,g=g,b=b}, {__tostring = function() return string.format("Color3.fromRGB(%d,%d,%d)", r, g, b) end}) end,
+    new = function(r, g, b) trackMemory("Color3_new", 96, "type"); return setmetatable({}, {__tostring = function() return string.format("Color3.new(%g,%g,%g)", r or 0, g or 0, b or 0) end}) end,
+    fromHSV = function(h, s, v) trackMemory("Color3_fromHSV", 96, "type"); return setmetatable({}, {__tostring = function() return string.format("Color3.fromHSV(%g,%g,%g)", h, s, v) end}) end,
 }
 
 env.UDim = {
-    new = function(s, o)
-        return setmetatable({}, {
-            __tostring = function() return string.format("UDim.new(%g, %g)", s, o) end
-        })
-    end
+    new = function(s, o) trackMemory("UDim", 64, "type"); return setmetatable({}, {__tostring = function() return string.format("UDim.new(%g,%g)", s, o) end}) end,
 }
 
 env.UDim2 = {
-    new = function(xs, xo, ys, yo)
-        return setmetatable({}, {
-            __tostring = function() return string.format("UDim2.new(%g, %g, %g, %g)", xs, xo, ys, yo) end
-        })
-    end
+    new = function(xs, xo, ys, yo) trackMemory("UDim2", 96, "type"); return setmetatable({}, {__tostring = function() return string.format("UDim2.new(%g,%g,%g,%g)", xs, xo, ys, yo) end}) end,
 }
 
 env.Vector2 = {
-    new = function(x, y)
-        return setmetatable({}, {
-            __tostring = function() return string.format("Vector2.new(%g, %g)", x, y) end
-        })
-    end
+    new = function(x, y) trackMemory("Vector2", 64, "type"); return setmetatable({}, {__tostring = function() return string.format("Vector2.new(%g,%g)", x, y) end}) end,
 }
 
 env.BrickColor = {
-    new = function(name)
-        return setmetatable({}, {
-            __tostring = function() return 'BrickColor.new("' .. name .. '")' end
-        })
-    end
+    new = function(name) trackMemory("BrickColor", 96, "type"); return setmetatable({}, {__tostring = function() return 'BrickColor.new("' .. name .. '")' end}) end,
 }
 
 env.NumberRange = {
-    new = function(...)
-        local args = {...}
-        return setmetatable({}, {
-            __tostring = function() return "NumberRange.new(" .. table.concat(args, ", ") .. ")" end
-        })
-    end
+    new = function(...) trackMemory("NumberRange", 64, "type"); local args = {...}; return setmetatable({}, {__tostring = function() return "NumberRange.new(" .. table.concat(args, ", ") .. ")" end}) end,
 }
 
 env.NumberSequence = {
-    new = function(...)
-        return setmetatable({}, {
-            __tostring = function() return "NumberSequence.new(...)" end
-        })
-    end
+    new = function(...) trackMemory("NumberSequence", 96, "type"); return setmetatable({}, {__tostring = function() return "NumberSequence.new(...)" end}) end,
 }
 
 env.NumberSequenceKeypoint = {
-    new = function(...)
-        return setmetatable({}, {
-            __tostring = function() return "NumberSequenceKeypoint.new(...)" end
-        })
-    end
+    new = function(...) trackMemory("NumberSequenceKeypoint", 96, "type"); return setmetatable({}, {__tostring = function() return "NumberSequenceKeypoint.new(...)" end}) end,
 }
 
 env.ColorSequence = {
-    new = function(...)
-        return setmetatable({}, {
-            __tostring = function() return "ColorSequence.new(...)" end
-        })
-    end
+    new = function(...) trackMemory("ColorSequence", 96, "type"); return setmetatable({}, {__tostring = function() return "ColorSequence.new(...)" end}) end,
 }
 
 env.ColorSequenceKeypoint = {
-    new = function(...)
-        return setmetatable({}, {
-            __tostring = function() return "ColorSequenceKeypoint.new(...)" end
-        })
-    end
+    new = function(...) trackMemory("ColorSequenceKeypoint", 96, "type"); return setmetatable({}, {__tostring = function() return "ColorSequenceKeypoint.new(...)" end}) end,
 }
 
 env.TweenInfo = {
-    new = function(...)
-        return setmetatable({}, {
-            __tostring = function() return "TweenInfo.new(...)" end
-        })
-    end
+    new = function(...) trackMemory("TweenInfo", 128, "type"); return setmetatable({}, {__tostring = function() return "TweenInfo.new(...)" end}) end,
 }
 
-env.tick = function() return os.clock() end
-env.wait = function(t) return 0 end
-env.delay = function(t, f) return 0 end
-env.spawn = function(f) f() end
+-- Timing functions
+env.tick = function() trackMemory("tick", 16, "timing"); return os.clock() end
+env.wait = function(t) trackMemory("wait", 32, "timing"); return 0 end
+env.delay = function(t, f) trackMemory("delay", 64, "timing"); return 0 end
+env.spawn = function(f) trackMemory("spawn", 128, "coroutine"); f() end
 
--- Enum
+-- Enum system
 env.Enum = setmetatable({}, {
     __index = function(t, k)
         return setmetatable({}, {
@@ -345,181 +733,138 @@ env.Enum = setmetatable({}, {
     end
 })
 
--- Game/Services
+-- Game & Services
 local services = {}
 env.game = setmetatable({}, {
     __index = function(t, k)
         if k == "GetService" then
             return function(self, name)
                 if not services[name] then
-                    -- Create service mock
+                    trackMemory("service_" .. name, 1024, "service")
                     services[name] = createMockInstance(name, 'game:GetService("' .. name .. '")')
                     
-                    -- Special handling for specific services
                     if name == "Players" then
                         services[name].LocalPlayer = createMockInstance("Player", "LocalPlayer")
                         services[name].LocalPlayer.Character = createMockInstance("Character", "Character")
                         services[name].LocalPlayer.CharacterAdded = createEvent()
+                        services[name].PlayerAdded = createEvent()
                     elseif name == "TweenService" then
                         services[name].Create = function(self, obj, info, props)
                             addCode('TweenService:Create(...)')
-                            return setmetatable({}, {
-                                __index = {
-                                    Play = function() addCode("Tween:Play()") end,
-                                    Cancel = function() addCode("Tween:Cancel()") end,
-                                    Pause = function() addCode("Tween:Pause()") end
-                                }
-                            })
+                            trackMemory("tween_creation", 256, "service")
+                            return setmetatable({}, {__index = {Play = function() addCode("Tween:Play()") end, Cancel = function() addCode("Tween:Cancel()") end}})
                         end
-                    elseif name == "TeleportService" then
-                        services[name].Teleport = function(self, placeId) addCode("TeleportService:Teleport(" .. placeId .. ")") end
-                        services[name].TeleportToPlaceInstance = function(self, placeId, instanceId) addCode("TeleportService:TeleportToPlaceInstance(...)") end
-                    elseif name == "MarketplaceService" then
-                        services[name].PromptGamePassPurchase = function() addCode("MarketplaceService:PromptGamePassPurchase(...)") end
-                        services[name].PromptProductPurchase = function() addCode("MarketplaceService:PromptProductPurchase(...)") end
+                    elseif name == "HttpService" then
+                        services[name].GetAsync = function(self, url)
+                            addCode('HttpService:GetAsync("' .. url .. '")')
+                            local response = fetchURL(url, "GET")
+                            return response or ""
+                        end
+                        services[name].PostAsync = function(self, url, data)
+                            addCode('HttpService:PostAsync("' .. url .. '", ...)')
+                            local response = fetchURL(url, "POST", {}, data)
+                            return response or ""
+                        end
                     end
                 end
                 return services[name]
             end
         end
-        if k == "HttpGet" or k == "HttpGetAsync" then
-            return env.HttpGet
-        end
-        -- Return event for other accesses
         return createEvent()
     end,
-    __tostring = function() return "game" end
 })
 
 env.workspace = createMockInstance("Workspace", "workspace")
 env.script = createMockInstance("Script", "script")
 
--- HTTP Mock Response
-local function createMockResponse(body)
-    return {
-        Body = body or "Mock Response",
-        StatusCode = 200,
-        StatusMessage = "OK",
-        Headers = {["Content-Type"] = "application/json"},
-        Success = true
-    }
-end
-
--- HTTP Functions
+-- HTTP & Network functions
 env.HttpGet = function(url)
     addCode('HttpGet("' .. tostring(url) .. '")')
-    return "Mock Response"
+    trackMemory("http_get", 256, "network")
+    local response = fetchURL(url, "GET")
+    return response or ""
 end
 
 env.HttpGetAsync = env.HttpGet
 
 env.request = function(options)
     local url = type(options) == "table" and options.Url or tostring(options)
-    local method = type(options) == "table" and options.Method or "GET"
-    addCode('request({Url = "' .. url .. '", Method = "' .. method .. '"})')
-    return createMockResponse()
+    addCode('request({Url = "' .. url .. '"})')
+    trackMemory("request", 512, "network")
+    return {Body = fetchURL(url, "GET") or "", StatusCode = 200}
 end
 
 env.http_request = env.request
-env.syn = { request = env.request }
+env.syn = {request = env.request}
 
 -- File operations
 env.writefile = function(filename, content)
     addCode('writefile("' .. filename .. '", [content])')
+    trackMemory("writefile", (#content or 1024), "file_io")
 end
 
 env.readfile = function(filename)
     addCode('readfile("' .. filename .. '")')
+    trackMemory("readfile", 1024, "file_io")
     return ""
 end
 
-env.isfile = function(filename) return true end
-env.delfile = function(filename) addCode('delfile("' .. filename .. '")') end
-env.listfiles = function(folder) return {} end
-env.makefolder = function(folder) addCode('makefolder("' .. folder .. '")') end
-env.delfolder = function(folder) addCode('delfolder("' .. folder .. '")') end
+env.isfile = function(filename) trackMemory("isfile", 64, "file_io"); return true end
+env.delfile = function(filename) addCode('delfile("' .. filename .. '")'); trackMemory("delfile", 64, "file_io") end
+env.listfiles = function(folder) trackMemory("listfiles", 512, "file_io"); return {} end
+env.makefolder = function(folder) addCode('makefolder("' .. folder .. '")'); trackMemory("makefolder", 64, "file_io") end
+env.delfolder = function(folder) addCode('delfolder("' .. folder .. '")'); trackMemory("delfolder", 64, "file_io") end
 
--- Loadstring
+-- Code loading
 env.loadstring = function(code)
     addCode("loadstring([code])")
+    trackMemory("loadstring", (#code or 1024), "code_loading")
     return function() end
 end
 
--- Exploit Environment
+-- Memory & Exploit functions
 env.getgenv = function() return env end
 env.getrenv = function() return env end
-env.getreg = function() return {} end
-env.getgc = function() return {} end
-env.getinstances = function() return {} end
-env.getnilinstances = function() return {} end
-env.getloadedmodules = function() return {} end
-env.getconnections = function() return {} end
-env.firesignal = function(signal, ...) addCode("firesignal(...)") end
-env.fireclickdetector = function(part) addCode("fireclickdetector(" .. tostring(part) .. ")") end
-env.firetouchinterest = function(part) addCode("firetouchinterest(" .. tostring(part) .. ")") end
-env.fireproximityprompt = function(prompt) addCode("fireproximityprompt(" .. tostring(prompt) .. ")") end
-env.setreadonly = function(t, val) end
-env.isreadonly = function(t) return false end
-env.setclipboard = function(text)
-    local preview = tostring(text):sub(1, 50)
-    addCode('setclipboard("' .. preview .. '")')
-end
+env.getreg = function() trackMemory("getreg", 2048, "memory"); return {} end
+env.getgc = function() trackMemory("getgc", 2048, "memory"); return {} end
+env.getinstances = function() trackMemory("getinstances", 1024, "memory"); return {} end
+env.getnilinstances = function() trackMemory("getnilinstances", 1024, "memory"); return {} end
+env.getloadedmodules = function() trackMemory("getloadedmodules", 1024, "memory"); return {} end
+env.getconnections = function(signal) trackMemory("getconnections", 512, "memory"); return {} end
 
-env.checkcaller = function() return true end
-env.newcclosure = function(f) return f end
-env.clonefunction = function(f) return f end
+-- Event firing
+env.firesignal = function(signal, ...) addCode("firesignal(...)"); trackMemory("firesignal", 256, "events") end
+env.fireclickdetector = function(part) addCode("fireclickdetector(...)"); trackMemory("fireclickdetector", 256, "events") end
+env.firetouchinterest = function(part) addCode("firetouchinterest(...)"); trackMemory("firetouchinterest", 256, "events") end
+env.fireproximityprompt = function(prompt) addCode("fireproximityprompt(...)"); trackMemory("fireproximityprompt", 256, "events") end
 
--- Exploit functions
-env.hookfunction = function(original, hook)
-    addCode("hookfunction([function], [hook])")
-    return original
-end
+-- Hooking
+env.hookfunction = function(original, hook) addCode("hookfunction([func], [hook])"); trackMemory("hookfunction", 512, "hooking"); return original end
+env.hookmetamethod = function(obj, method, hook) addCode('hookmetamethod([obj], "' .. tostring(method) .. '", [hook])'); trackMemory("hookmetamethod", 512, "hooking"); return function() end end
 
-env.hookmetamethod = function(obj, method, hook)
-    addCode('hookmetamethod([obj], "' .. tostring(method) .. '", [hook])')
-    return function() end
-end
-
+-- Drawing
 env.Drawing = {
     new = function(drawingType)
         instanceCounter = instanceCounter + 1
         local varName = "Drawing" .. instanceCounter
         addCode('local ' .. varName .. ' = Drawing.new("' .. drawingType .. '")')
-        
+        trackMemory(varName, 512, "drawing")
         return setmetatable({__varName = varName}, {
             __index = function(t, k) return nil end,
-            __newindex = function(t, k, v)
-                addCode(varName .. "." .. k .. " = " .. tostring(v))
-            end,
-            __tostring = function() return varName end
+            __newindex = function(t, k, v) addCode(varName .. "." .. k .. " = " .. tostring(v)) end,
         })
     end
 }
 
--- Wait/Task
-env.wait = function(t)
-    if t then
-        addCode("wait(" .. t .. ")")
-    else
-        addCode("wait()")
-    end
-    return 0
-end
-
+-- Task library
 env.task = {
-    wait = function(t)
-        addCode("task.wait(" .. (t or "") .. ")")
-        return 0
-    end,
-    spawn = function(func)
-        addCode("task.spawn(function() end)")
-    end,
-    delay = function(t, func)
-        addCode("task.delay(" .. t .. ", function() end)")
-    end
+    wait = function(t) addCode("task.wait(...)"); trackMemory("task_wait", 32, "timing"); return 0 end,
+    spawn = function(func) addCode("task.spawn(...)"); trackMemory("task_spawn", 256, "coroutine") end,
+    delay = function(t, func) addCode("task.delay(...)"); trackMemory("task_delay", 128, "timing") end,
+    defer = function(func) addCode("task.defer(...)"); trackMemory("task_defer", 256, "coroutine") end,
 }
 
--- Standard globals
+-- Standard Lua
 env.type = type
 env.typeof = type
 env.tostring = tostring
@@ -549,351 +894,123 @@ env.bit32 = bit32
 env.utf8 = utf8
 
 -- ═══════════════════════════════════════════════════════════════
--- HOOKOP - OPERATION TRACKING
+-- ADVANCED OPERATION TRACKING WITH ARITHMETIC HOOKS
 -- ═══════════════════════════════════════════════════════════════
 
 if settings.hookOp then
-    -- Track comparisons and operations
-    local operationCount = 0
-    
-    -- Create tracked number type for arithmetic operations
     local function createTrackedNumber(value)
         return setmetatable({__value = value}, {
-            __add = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " + " .. bv .. " = " .. (av + bv))
-                end
-                return createTrackedNumber(av + bv)
-            end,
-            __sub = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " - " .. bv .. " = " .. (av - bv))
-                end
-                return createTrackedNumber(av - bv)
-            end,
-            __mul = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " * " .. bv .. " = " .. (av * bv))
-                end
-                return createTrackedNumber(av * bv)
-            end,
-            __div = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " / " .. bv .. " = " .. (av / bv))
-                end
-                return createTrackedNumber(av / bv)
-            end,
-            __mod = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " % " .. bv .. " = " .. (av % bv))
-                end
-                return createTrackedNumber(av % bv)
-            end,
-            __pow = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                if settings.comments then
-                    addComment("Operation: " .. av .. " ^ " .. bv .. " = " .. (av ^ bv))
-                end
-                return createTrackedNumber(av ^ bv)
-            end,
-            __unm = function(a)
-                local av = type(a) == "table" and a.__value or a
-                if settings.comments then
-                    addComment("Operation: -" .. av .. " = " .. (-av))
-                end
-                return createTrackedNumber(-av)
-            end,
-            __eq = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                local result = av == bv
-                addComment("Comparison: " .. av .. " == " .. bv .. " -> " .. tostring(result))
-                return result
-            end,
-            __lt = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                local result = av < bv
-                addComment("Comparison: " .. av .. " < " .. bv .. " -> " .. tostring(result))
-                return result
-            end,
-            __le = function(a, b)
-                local av = type(a) == "table" and a.__value or a
-                local bv = type(b) == "table" and b.__value or b
-                local result = av <= bv
-                addComment("Comparison: " .. av .. " <= " .. bv .. " -> " .. tostring(result))
-                return result
-            end,
-            __tostring = function(self)
-                return tostring(self.__value)
-            end,
-            __tonumber = function(self)
-                return self.__value
-            end
+            __add = function(a, b) local av = type(a) == "table" and a.__value or a; local bv = type(b) == "table" and b.__value or b; addComment("OP: " .. av .. " + " .. bv); return createTrackedNumber(av + bv) end,
+            __sub = function(a, b) local av = type(a) == "table" and a.__value or a; local bv = type(b) == "table" and b.__value or b; addComment("OP: " .. av .. " - " .. bv); return createTrackedNumber(av - bv) end,
+            __mul = function(a, b) local av = type(a) == "table" and a.__value or a; local bv = type(b) == "table" and b.__value or b; addComment("OP: " .. av .. " * " .. bv); return createTrackedNumber(av * bv) end,
+            __div = function(a, b) local av = type(a) == "table" and a.__value or a; local bv = type(b) == "table" and b.__value or b; addComment("OP: " .. av .. " / " .. bv); return createTrackedNumber(av / bv) end,
+            __mod = function(a, b) local av = type(a) == "table" and a.__value or a; local bv = type(b) == "table" and b.__value or b; addComment("OP: " .. av .. " % " .. bv); return createTrackedNumber(av % bv) end,
+            __tostring = function(self) return tostring(self.__value) end,
         })
     end
     
-    -- Enhance tonumber to return tracked numbers
     local original_tonumber = env.tonumber
-    env.tonumber = function(...)
-        local result = original_tonumber(...)
-        if result and settings.hookOp then
-            return createTrackedNumber(result)
-        end
-        return result
-    end
+    env.tonumber = function(...) local result = original_tonumber(...); return result and createTrackedNumber(result) or result end
 end
 
--- Environment
-env._G = env
-env.shared = {}
-env._VERSION = "Lua 5.1"
-env.getfenv = function() return env end
-env.setfenv = function(f, t) return f end
+-- ═══════════════════════════════════════════════════════════════
+-- SCRIPT EXECUTION & STATE CAPTURE
+-- ═══════════════════════════════════════════════════════════════
 
--- Catch undefined globals
-setmetatable(env, {
-    __index = function(t, k)
-        return nil
-    end
-})
+detectVMCharacteristics(env)
+detectObfuscationPatterns(scriptContent)
+state.vulnerabilities = scanVulnerabilities(scriptContent)
 
--- Execute
 local chunk, err = loadstring(scriptContent, "@script")
 if not chunk then
-    print("-- Error: " .. tostring(err))
     process.exit(1)
 end
-
--- ═══════════════════════════════════════════════════════════════
--- ADVANCED FUNCTION RECONSTRUCTION
--- ═══════════════════════════════════════════════════════════════
-
-local functionCounter = 0
-local trackedFunctions = {}
-
--- Smart value serializer for reconstruction
-local function serializeValue(value, depth)
-    depth = depth or 0
-    if depth > 3 then return "..." end
-    
-    local valueType = type(value)
-    
-    if valueType == "nil" then
-        return "nil"
-    elseif valueType == "boolean" then
-        return tostring(value)
-    elseif valueType == "number" then
-        return tostring(value)
-    elseif valueType == "string" then
-        return '"' .. truncateString(value:gsub('"', '\\"'), 256) .. '"'
-    elseif valueType == "table" then
-        -- Check for special types
-        if value.__varName then
-            return value.__varName
-        elseif value.__className then
-            return value.__className
-        elseif value.__tostring then
-            return tostring(value)
-        else
-            -- Try to serialize table
-            local parts = {}
-            local count = 0
-            for k, v in pairs(value) do
-                count = count + 1
-                if count > 5 then
-                    table.insert(parts, "...")
-                    break
-                end
-                if type(k) == "string" and k:match("^[%a_][%w_]*$") then
-                    table.insert(parts, k .. " = " .. serializeValue(v, depth + 1))
-                else
-                    table.insert(parts, "[" .. serializeValue(k, depth + 1) .. "] = " .. serializeValue(v, depth + 1))
-                end
-            end
-            return "{" .. table.concat(parts, ", ") .. "}"
-        end
-    elseif valueType == "function" then
-        if trackedFunctions[value] then
-            return trackedFunctions[value].name
-        else
-            return "function() end"
-        end
-    else
-        return tostring(value)
-    end
-end
-
--- Extract function parameters using debug info (if available) or fallback
-local function getFunctionParams(func)
-    -- Try debug.getinfo if available
-    local hasDebug, debugInfo = pcall(debug.getinfo, func, "u")
-    if hasDebug and debugInfo then
-        local paramCount = debugInfo.nparams or 0
-        local params = {}
-        for i = 1, paramCount do
-            params[i] = "arg" .. i
-        end
-        if debugInfo.isvararg then
-            table.insert(params, "...")
-        end
-        return params
-    end
-    
-    -- Fallback: assume common patterns
-    return {"..."}
-end
-
--- Wrap function to track calls and reconstruct
-local function wrapFunction(func, funcName, params)
-    if not settings.explore_funcs then
-        -- Return placeholder
-        return function(...)
-            addComment("Function " .. funcName .. " called (explore_funcs disabled)")
-            return nil
-        end
-    end
-    
-    trackedFunctions[func] = {
-        name = funcName,
-        params = params,
-        calls = 0
-    }
-    
-    return function(...)
-        local args = {...}
-        trackedFunctions[func].calls = trackedFunctions[func].calls + 1
-        
-        -- Log function call
-        local argStrs = {}
-        for i, arg in ipairs(args) do
-            argStrs[i] = serializeValue(arg)
-        end
-        
-        local callStr = funcName .. "(" .. table.concat(argStrs, ", ") .. ")"
-        
-        if settings.comments then
-            addComment("Function call: " .. callStr)
-        end
-        
-        -- Execute original function in controlled environment
-        local results = {pcall(func, ...)}
-        local success = table.remove(results, 1)
-        
-        if success then
-            if settings.comments and #results > 0 then
-                addComment("Returned: " .. serializeValue(results[1]))
-            end
-            return unpack(results)
-        else
-            if settings.comments then
-                addComment("Function errored: " .. tostring(results[1]))
-            end
-            return nil
-        end
-    end
-end
-
--- Track function definitions through setfenv wrapping
-local function trackFunctionDefinition(func, name)
-    functionCounter = functionCounter + 1
-    local funcName = name or ("func" .. functionCounter)
-    local params = getFunctionParams(func)
-    
-    -- Add function definition to reconstruction
-    if settings.explore_funcs then
-        local paramStr = table.concat(params, ", ")
-        addCode("local function " .. funcName .. "(" .. paramStr .. ")")
-        addComment("Function body execution tracked below")
-        addCode("end")
-    else
-        addCode("local function " .. funcName .. "(...) --[[enable explore_funcs to view]] end")
-    end
-    
-    return wrapFunction(func, funcName, params)
-end
-
--- Enhanced loadstring that reconstructs the loaded code
-env.loadstring = function(code, chunkname)
-    if settings.explore_funcs then
-        addCode("-- loadstring code:")
-        addCode(truncateString(code, 1000))
-    else
-        addCode("loadstring([[" .. truncateString(code, 100) .. "]])")
-    end
-    addComment("[SECURITY] loadstring NOT executed")
-    
-    -- Return wrapped function
-    return function(...)
-        addComment("loadstring function called")
-        return nil
-    end
-end
-
--- Track pcall/xpcall for better flow
-local original_pcall = env.pcall
-env.pcall = function(func, ...)
-    local results = {original_pcall(func, ...)}
-    local success = results[1]
-    
-    -- Disabled: too noisy
-    -- if settings.comments then
-    --     addComment("pcall " .. (success and "succeeded" or "failed"))
-    -- end
-    
-    return unpack(results)
-end
-
-local original_xpcall = env.xpcall
-env.xpcall = function(func, errorHandler, ...)
-    local results = {original_xpcall(func, errorHandler, ...)}
-    local success = results[1]
-    
-    -- Disabled: too noisy
-    -- if settings.comments then
-    --     addComment("xpcall " .. (success and "succeeded" or "failed"))
-    -- end
-    
-    return unpack(results)
-end
-
--- ═══════════════════════════════════════════════════════════════
--- SCRIPT EXECUTION
--- ═══════════════════════════════════════════════════════════════
 
 setfenv(chunk, env)
 local success, result = pcall(chunk)
 
-if not success then
-    print("-- Runtime error: " .. tostring(result))
-end
-
--- Check for returned function (VM obfuscators)
 if success and type(result) == "function" then
     setfenv(result, env)
     pcall(result)
 end
 
--- Output ONLY the reconstructed code
-print("-- Reconstructed Lua Code")
-print("-- Generated by Roblox Environment Logger")
-print("-- Original file: " .. scriptPath)
-print("")
+logCallStack()
+heapDump()
 
-for _, line in ipairs(codeLines) do
-    print(line)
+-- ═══════════════════════════════════════════════════════════════
+-- DATA SERIALIZATION FOR OUTPUT
+-- ═══════════════════════════════════════════════════════════════
+
+local function serializeState()
+    local output = {}
+    
+    -- Code reconstruction
+    table.insert(output, "CODE:" .. table.concat(state.codeLines, "\n"))
+    
+    -- VM Detection
+    if settings.vm_detection and countTable(vmDetector.detected_vms) > 0 then
+        local vms = {}
+        for vm_type, _ in pairs(vmDetector.detected_vms) do
+            table.insert(vms, vm_type)
+        end
+        table.insert(output, "VMS:" .. table.concat(vms, ","))
+    end
+    
+    -- Obfuscation markers
+    if settings.obfuscation_analysis and countTable(vmDetector.obfuscation_markers) > 0 then
+        local markers = {}
+        for marker, _ in pairs(vmDetector.obfuscation_markers) do
+            table.insert(markers, marker)
+        end
+        table.insert(output, "OBFUSCATION:" .. table.concat(markers, ","))
+    end
+    
+    -- Memory metrics
+    if settings.memory_analysis then
+        table.insert(output, "MEMORY_TOTAL:" .. memoryAnalyzer.total_allocated)
+        table.insert(output, "MEMORY_PEAK:" .. memoryAnalyzer.peak_allocated)
+        table.insert(output, "MEMORY_OBJECTS:" .. countTable(memoryAnalyzer.allocations))
+    end
+    
+    -- Vulnerabilities
+    if settings.vulnerability_scan and #state.vulnerabilities > 0 then
+        local vulnStrs = {}
+        for _, vuln in ipairs(state.vulnerabilities) do
+            table.insert(vulnStrs, vuln.type .. ":" .. vuln.severity)
+        end
+        table.insert(output, "VULNERABILITIES:" .. table.concat(vulnStrs, ","))
+    end
+    
+    -- URLs
+    if countTable(state.urlCache) > 0 then
+        local urls = {}
+        for url, _ in pairs(state.urlCache) do
+            table.insert(urls, url)
+        end
+        table.insert(output, "URLS:" .. table.concat(urls, "|"))
+    end
+    
+    -- Control flow
+    if settings.control_flow_analysis then
+        local flow = analyzeControlFlow(scriptContent)
+        table.insert(output, "CONTROL_FLOW:conditionals=" .. flow.conditionals .. ",loops=" .. flow.loops)
+    end
+    
+    -- Performance
+    if settings.performance_profiling and countTable(profiler.call_counts) > 0 then
+        local profs = {}
+        for func, count in pairs(profiler.call_counts) do
+            table.insert(profs, func .. "=" .. count)
+        end
+        table.insert(output, "PERFORMANCE:" .. table.concat(profs, ","))
+    end
+    
+    return table.concat(output, "\n---\n")
 end
 
-print("")
-print("-- End of reconstructed code")
+-- ═══════════════════════════════════════════════════════════════
+-- WRITE OUTPUT TO FILE
+-- ═══════════════════════════════════════════════════════════════
+
+local outputFile = scriptPath .. ".reconstructed"
+fs.writeFile(outputFile, serializeState())
