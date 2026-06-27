@@ -33,8 +33,7 @@ local settings = {
     cache_enabled = process.env.SETTING_FETCH_CACHE == "1",
     cache_dir = process.env.SETTING_FETCH_CACHE_DIR or ".fetch_cache",
     verbose = process.env.SETTING_VERBOSE == "1",
-    output_file = process.env.SETTING_OUTPUT_FILE or nil,
-    execution_timeout = tonumber(process.env.SETTING_EXEC_TIMEOUT) or 5 -- seconds for sandbox
+    output_file = process.env.SETTING_OUTPUT_FILE or nil
 }
 
 -- Parse simple CLI flags (overrides env settings)
@@ -49,26 +48,10 @@ for i = 2, #process.args do
     if out then settings.output_file = out end
     local cache = a:match("^--cache-dir=(.+)$")
     if cache then settings.cache_dir = cache end
-    if a:match("^--exec-timeout=(%d+)") then settings.execution_timeout = tonumber(a:match("^--exec-timeout=(%d+)")) end
 end
 
 -- Code reconstruction buffer
 local codeLines = {}
-
--- Additional collectors
-local collected_constants = {}
-local function collectConstant(v)
-    if not settings.constant_collection then return end
-    local t = type(v)
-    if t == "string" or t == "number" or t == "boolean" then
-        collected_constants[vostring(v)] = (collected_constants[vostring(v)] or 0) + 1
-    end
-end
-
-local function vostring(v)
-    if type(v) == "string" then return v end
-    return tostring(v)
-end
 
 -- String truncation helper
 local function truncateString(str, maxLen)
@@ -120,7 +103,7 @@ env.warn = function(...)
     addCode("warn(" .. table.concat(strs, ", ") .. ")")
 end
 
--- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â Helpers & Mocks Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 -- Create event/signal mock
 local function createEvent()
@@ -163,7 +146,7 @@ local function createGenericProxy(name)
     })
 end
 
--- Enhanced mock instance creation
+-- Create mock instance with common Roblox methods
 local function createMockInstance(className, varName)
     local mock = {
         __className = className,
@@ -192,7 +175,7 @@ local function createMockInstance(className, varName)
             elseif k == "IsA" then
                 return function(self, typeName) return typeName == className end
             -- Common events
-            elseif (type(k) == "string") and (k:match("Click") or k:match("Input") or k:match("Changed") or k:match("beat") or k:match("Added") or k:match("Removing") or k:match("Enter") or k:match("Leave")) then
+            elseif k:match("Click") or k:match("Input") or k:match("Changed") or k:match("beat") or k:match("Added") or k:match("Removing") or k:match("Enter") or k:match("Leave") then
                 return createEvent()
             -- Return event for unknown properties
             else
@@ -210,6 +193,7 @@ local function createMockInstance(className, varName)
                 if v.__varName then
                     valueStr = v.__varName
                 else
+                    -- Check for __tostring metamethod
                     local mt = getmetatable(v)
                     if mt and mt.__tostring then
                         valueStr = tostring(v)
@@ -232,7 +216,12 @@ local function createMockInstance(className, varName)
     })
 end
 
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 -- INSTANCE TRACKING
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+-- Instance tracking
 local instanceCounter = 0
 local instances = {}
 
@@ -248,11 +237,12 @@ env.Instance = {
             addCode("local " .. varName .. ' = Instance.new("' .. className .. '")')
         end
         
+        -- Return mock instance with full method support
         return createMockInstance(className, varName)
     end
 }
 
--- Math types (unchanged, with safe tostring)
+-- Math types
 env.Vector3 = {
     new = function(x, y, z)
         return setmetatable({}, {
@@ -378,14 +368,17 @@ env.Enum = setmetatable({}, {
     end
 })
 
--- Game/Services with additional mocks (RunService/UserInputService/ContentProvider)
+-- Game/Services
 local services = {}
 env.game = setmetatable({}, {
     __index = function(t, k)
         if k == "GetService" then
             return function(self, name)
                 if not services[name] then
+                    -- Create service mock
                     services[name] = createMockInstance(name, 'game:GetService("' .. name .. '")')
+                    
+                    -- Special handling for specific services
                     if name == "Players" then
                         services[name].LocalPlayer = createMockInstance("Player", "LocalPlayer")
                         services[name].LocalPlayer.Character = createMockInstance("Character", "Character")
@@ -402,20 +395,11 @@ env.game = setmetatable({}, {
                             })
                         end
                     elseif name == "TeleportService" then
-                        services[name].Teleport = function(self, placeId) addCode("TeleportService:Teleport(" .. tostring(placeId) .. ")") end
+                        services[name].Teleport = function(self, placeId) addCode("TeleportService:Teleport(" .. placeId .. ")") end
                         services[name].TeleportToPlaceInstance = function(self, placeId, instanceId) addCode("TeleportService:TeleportToPlaceInstance(...)") end
                     elseif name == "MarketplaceService" then
                         services[name].PromptGamePassPurchase = function() addCode("MarketplaceService:PromptGamePassPurchase(...)") end
                         services[name].PromptProductPurchase = function() addCode("MarketplaceService:PromptProductPurchase(...)") end
-                    elseif name == "RunService" then
-                        services[name].Stepped = createEvent()
-                        services[name].Heartbeat = createEvent()
-                        services[name].RenderStepped = createEvent()
-                    elseif name == "UserInputService" then
-                        services[name].InputBegan = createEvent()
-                        services[name].InputEnded = createEvent()
-                    elseif name == "ContentProvider" then
-                        services[name].PreloadAsync = function() addCode("ContentProvider:PreloadAsync(...)") end
                     end
                 end
                 return services[name]
@@ -424,6 +408,7 @@ env.game = setmetatable({}, {
         if k == "HttpGet" or k == "HttpGetAsync" then
             return env.HttpGet
         end
+        -- Return event for other accesses
         return createEvent()
     end,
     __tostring = function() return "game" end
@@ -443,7 +428,7 @@ local function createMockResponse(body)
     }
 end
 
--- HTTP Functions (basic)
+-- HTTP Functions
 env.HttpGet = function(url)
     addCode('HttpGet("' .. tostring(url) .. '")')
     return "Mock Response"
@@ -477,7 +462,7 @@ env.listfiles = function(folder) return {} end
 env.makefolder = function(folder) addCode('makefolder("' .. folder .. '")') end
 env.delfolder = function(folder) addCode('delfolder("' .. folder .. '")') end
 
--- Loadstring (enhanced placeholder)
+-- Loadstring
 env.loadstring = function(code)
     addCode("loadstring([code])")
     return function() end
@@ -586,49 +571,70 @@ env.os = os
 env.bit32 = bit32
 env.utf8 = utf8
 
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- HOOKOP - OPERATION TRACKING
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 if settings.hookOp then
+    -- Track comparisons and operations
+    local operationCount = 0
+    
+    -- Create tracked number type for arithmetic operations
     local function createTrackedNumber(value)
         return setmetatable({__value = value}, {
             __add = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " + " .. bv .. " = " .. (av + bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " + " .. bv .. " = " .. (av + bv))
+                end
                 return createTrackedNumber(av + bv)
             end,
             __sub = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " - " .. bv .. " = " .. (av - bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " - " .. bv .. " = " .. (av - bv))
+                end
                 return createTrackedNumber(av - bv)
             end,
             __mul = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " * " .. bv .. " = " .. (av * bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " * " .. bv .. " = " .. (av * bv))
+                end
                 return createTrackedNumber(av * bv)
             end,
             __div = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " / " .. bv .. " = " .. (av / bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " / " .. bv .. " = " .. (av / bv))
+                end
                 return createTrackedNumber(av / bv)
             end,
             __mod = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " % " .. bv .. " = " .. (av % bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " % " .. bv .. " = " .. (av % bv))
+                end
                 return createTrackedNumber(av % bv)
             end,
             __pow = function(a, b)
                 local av = type(a) == "table" and a.__value or a
                 local bv = type(b) == "table" and b.__value or b
-                if settings.comments then addComment("Operation: " .. av .. " ^ " .. bv .. " = " .. (av ^ bv)) end
+                if settings.comments then
+                    addComment("Operation: " .. av .. " ^ " .. bv .. " = " .. (av ^ bv))
+                end
                 return createTrackedNumber(av ^ bv)
             end,
             __unm = function(a)
                 local av = type(a) == "table" and a.__value or a
-                if settings.comments then addComment("Operation: -" .. av .. " = " .. (-av)) end
+                if settings.comments then
+                    addComment("Operation: -" .. av .. " = " .. (-av))
+                end
                 return createTrackedNumber(-av)
             end,
             __eq = function(a, b)
@@ -652,11 +658,16 @@ if settings.hookOp then
                 addComment("Comparison: " .. av .. " <= " .. bv .. " -> " .. tostring(result))
                 return result
             end,
-            __tostring = function(self) return tostring(self.__value) end,
-            __tonumber = function(self) return self.__value end
+            __tostring = function(self)
+                return tostring(self.__value)
+            end,
+            __tonumber = function(self)
+                return self.__value
+            end
         })
     end
     
+    -- Enhance tonumber to return tracked numbers
     local original_tonumber = env.tonumber
     env.tonumber = function(...)
         local result = original_tonumber(...)
@@ -681,7 +692,17 @@ setmetatable(env, {
     end
 })
 
+-- Execute
+local chunk, err = loadstring(scriptContent, "@script")
+if not chunk then
+    print("-- Error: " .. tostring(err))
+    process.exit(1)
+end
+
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 -- ADVANCED FUNCTION RECONSTRUCTION
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
 local functionCounter = 0
 local trackedFunctions = {}
 
@@ -695,15 +716,13 @@ local function serializeValue(value, depth)
     if valueType == "nil" then
         return "nil"
     elseif valueType == "boolean" then
-        collectConstant(value)
         return tostring(value)
     elseif valueType == "number" then
-        collectConstant(value)
         return tostring(value)
     elseif valueType == "string" then
-        collectConstant(value)
         return '"' .. truncateString(value:gsub('"', '\\"'), 256) .. '"'
     elseif valueType == "table" then
+        -- Check for special types
         if value.__varName then
             return value.__varName
         elseif value.__className then
@@ -711,6 +730,7 @@ local function serializeValue(value, depth)
         elseif value.__tostring then
             return tostring(value)
         else
+            -- Try to serialize table
             local parts = {}
             local count = 0
             for k, v in pairs(value) do
@@ -740,6 +760,7 @@ end
 
 -- Extract function parameters using debug info (if available) or fallback
 local function getFunctionParams(func)
+    -- Try debug.getinfo if available
     local hasDebug, debugInfo = pcall(debug.getinfo, func, "u")
     if hasDebug and debugInfo then
         local paramCount = debugInfo.nparams or 0
@@ -752,12 +773,15 @@ local function getFunctionParams(func)
         end
         return params
     end
+    
+    -- Fallback: assume common patterns
     return {"..."}
 end
 
 -- Wrap function to track calls and reconstruct
 local function wrapFunction(func, funcName, params)
     if not settings.explore_funcs then
+        -- Return placeholder
         return function(...)
             addComment("Function " .. funcName .. " called (explore_funcs disabled)")
             return nil
@@ -774,6 +798,7 @@ local function wrapFunction(func, funcName, params)
         local args = {...}
         trackedFunctions[func].calls = trackedFunctions[func].calls + 1
         
+        -- Log function call
         local argStrs = {}
         for i, arg in ipairs(args) do
             argStrs[i] = serializeValue(arg)
@@ -785,6 +810,7 @@ local function wrapFunction(func, funcName, params)
             addComment("Function call: " .. callStr)
         end
         
+        -- Execute original function in controlled environment
         local results = {pcall(func, ...)}
         local success = table.remove(results, 1)
         
@@ -808,6 +834,7 @@ local function trackFunctionDefinition(func, name)
     local funcName = name or ("func" .. functionCounter)
     local params = getFunctionParams(func)
     
+    -- Add function definition to reconstruction
     if settings.explore_funcs then
         local paramStr = table.concat(params, ", ")
         addCode("local function " .. funcName .. "(" .. paramStr .. ")")
@@ -829,105 +856,70 @@ env.loadstring = function(code, chunkname)
         addCode("loadstring([[" .. truncateString(code, 100) .. "]])")
     end
     addComment("[SECURITY] loadstring NOT executed")
+    
+    -- Return wrapped function
     return function(...)
         addComment("loadstring function called")
         return nil
     end
 end
 
--- Track pcall/xpcall for better flow (kept simple)
+-- Track pcall/xpcall for better flow
 local original_pcall = env.pcall
 env.pcall = function(func, ...)
     local results = {original_pcall(func, ...)}
+    local success = results[1]
+    
+    -- Disabled: too noisy
+    -- if settings.comments then
+    --     addComment("pcall " .. (success and "succeeded" or "failed"))
+    -- end
+    
     return unpack(results)
 end
 
 local original_xpcall = env.xpcall
 env.xpcall = function(func, errorHandler, ...)
     local results = {original_xpcall(func, errorHandler, ...)}
+    local success = results[1]
+    
+    -- Disabled: too noisy
+    -- if settings.comments then
+    --     addComment("xpcall " .. (success and "succeeded" or "failed"))
+    -- end
+    
     return unpack(results)
 end
 
--- SCRIPT EXECUTION (with sandbox timeout using debug.sethook if available)
-local chunk, err = loadstring(scriptContent, "@script")
-if not chunk then
-    -- Record error as comment instead of printing
-    addComment("-- Error loading script: " .. tostring(err))
-else
-    setfenv(chunk, env)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+-- SCRIPT EXECUTION
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-    local function runWithTimeout(f, timeout)
-        if not timeout or timeout <= 0 then
-            return pcall(f)
-        end
-        local hasDebug = type(debug) == "table" and type(debug.sethook) == "function"
-        if hasDebug then
-            local start = os.clock()
-            local function hook()
-                if os.clock() - start > timeout then
-                    error("Execution timed out")
-                end
-            end
-            debug.sethook(hook, "", 100000)
-            local ok, res = pcall(f)
-            debug.sethook()
-            return ok, res
-        else
-            -- fallback: no preemption possible, just pcall
-            return pcall(f)
-        end
-    end
+setfenv(chunk, env)
+local success, result = pcall(chunk)
 
-    local success, result = runWithTimeout(function() return chunk() end, settings.execution_timeout)
-
-    if not success then
-        addComment("-- Runtime error: " .. tostring(result))
-    else
-        -- If returned function from chunk, try to run it within same sandbox
-        if type(result) == "function" then
-            setfenv(result, env)
-            local ok2, res2 = runWithTimeout(function() return result() end, settings.execution_timeout)
-            if not ok2 then
-                addComment("-- Runtime error (returned function): " .. tostring(res2))
-            end
-        end
-    end
+if not success then
+    print("-- Runtime error: " .. tostring(result))
 end
 
--- New Feature: Fetch-any-URL utility (with fallbacks and caching), extended
+-- Check for returned function (VM obfuscators)
+if success and type(result) == "function" then
+    setfenv(result, env)
+    pcall(result)
+end
+
+-- New Feature: Fetch-any-URL utility (with fallbacks and caching)
+-- This function will attempt to fetch a URL if settings.allow_fetch is true.
 local function ensureCacheDir()
     if not settings.cache_enabled then return end
-    -- Prefer actual fs if available, otherwise log intent
-    local ok, _ = pcall(fs.makeFolder or fs.mkdir or function() end, settings.cache_dir)
-    -- Record cache creation as code for reconstruction
+    -- Record cache directory creation in reconstruction log
     addCode('makefolder("' .. settings.cache_dir .. '")')
 end
 
 local function cacheKeyForUrl(url)
+    -- simple safe filename: base64-like but replace unsafe chars
     local key = url:gsub("[^%w%-_%.~]", function(c) return string.format("%%%02X", string.byte(c)) end)
     return settings.cache_dir .. "/" .. key
-end
-
-local function tryLuaSecFetch(url, timeout, followRedirects)
-    local ok_ssl, https = pcall(require, "ssl.https")
-    if not ok_ssl or not https then return nil, "no_luasec" end
-    local ltn12_ok, ltn12 = pcall(require, "ltn12")
-    if not ltn12_ok or not ltn12 then return nil, "no_ltn12" end
-    local resbody = {}
-    local r, code, headers, status = https.request{
-        url = url,
-        sink = ltn12.sink.table(resbody),
-        redirect = followRedirects and true or false,
-        protocol = "any",
-        timeout = timeout
-    }
-    local body = table.concat(resbody)
-    return {
-        Body = body,
-        StatusCode = tonumber(code) or 0,
-        Headers = headers or {},
-        StatusMessage = tostring(status or "")
-    }
 end
 
 local function tryLuaSocketFetch(url, timeout, followRedirects)
@@ -936,13 +928,18 @@ local function tryLuaSocketFetch(url, timeout, followRedirects)
     local ltn12_ok, ltn12 = pcall(require, "ltn12")
     if not ltn12_ok or not ltn12 then return nil, "no_ltn12" end
     local resbody = {}
+    local request_ok, code, headers, status
+    -- Some LuaSocket versions respect sink directly
     http.TIMEOUT = timeout or settings.fetch_timeout
-    local request_ok, code, headers, status = http.request{
+    request_ok, code, headers, status = http.request{
         url = url,
         sink = ltn12.sink.table(resbody),
         redirect = followRedirects and true or false,
         protocol = "any"
     }
+    if not request_ok and type(code) == "string" then
+        -- older API might return body, code, headers
+    end
     local body = table.concat(resbody)
     return {
         Body = body,
@@ -953,17 +950,19 @@ local function tryLuaSocketFetch(url, timeout, followRedirects)
 end
 
 local function tryCurlFetch(url, timeout, followRedirects)
+    -- Use curl if available via io.popen; fallback only if environment has curl
     local curlCmd = 'curl -s -S'
     if followRedirects then curlCmd = curlCmd .. ' -L' end
     curlCmd = curlCmd .. ' --max-time ' .. tostring(timeout or settings.fetch_timeout)
     curlCmd = curlCmd .. ' ' .. ('"' .. url:gsub('"', '\\"') .. '"')
     local f = io.popen(curlCmd, "r")
     if not f then return nil, "no_curl" end
-    local body = f:read("*a") or ""
-    local okc, _, exit = pcall(function() return f:close() end)
+    local body = f:read("*a")
+    local ok, _, exit = pcall(function() return f:close() end)
+    -- We cannot reliably get headers/rcode without more flags; return body + crude status
     return {
-        Body = body,
-        StatusCode = (okc and 0) or (exit and exit) or 0,
+        Body = body or "",
+        StatusCode = (ok and 0) or (exit and exit) or 0,
         Headers = {},
         StatusMessage = "curl"
     }
@@ -976,13 +975,16 @@ local function fetchUrlAny(url, opts)
         return createMockResponse("Fetch disabled")
     end
 
-    if settings.verbose then addComment("Fetching URL: " .. tostring(url)) end
+    if settings.verbose then
+        addComment("Fetching URL: " .. tostring(url))
+    end
 
     ensureCacheDir()
     local cacheKey = cacheKeyForUrl(url)
     if settings.cache_enabled then
-        local ok, cached = pcall(fs.readFile, cacheKey)
-        if ok and cached and cached ~= "" then
+        -- Try to read cached content (we only record the read call; actual read behavior depends on env)
+        local cached = env.readfile and env.readfile(cacheKey) or nil
+        if cached and cached ~= "" then
             addComment("Using cached response for " .. url)
             return {
                 Body = cached,
@@ -994,44 +996,57 @@ local function fetchUrlAny(url, opts)
         end
     end
 
-    local lastErr = ""
+    local lastErr
     for attempt = 1, (opts.retries or settings.fetch_retries) do
-        local res, err = tryLuaSecFetch(url, opts.timeout or settings.fetch_timeout, opts.followRedirects or settings.fetch_follow_redirects)
+        -- Try LuaSocket first
+        local res, err = tryLuaSocketFetch(url, opts.timeout or settings.fetch_timeout, opts.followRedirects or settings.fetch_follow_redirects)
         if res and res.Body then
-            if settings.cache_enabled then pcall(fs.writeFile, cacheKey, res.Body) end
-            addCode('HttpFetch("' .. tostring(url) .. '", "luasec")')
-            return { Body = res.Body, StatusCode = res.StatusCode or 200, Headers = res.Headers or {}, StatusMessage = res.StatusMessage or "OK", Success = true }
-        end
-        lastErr = lastErr .. tostring(err) .. ";"
-
-        local res2, err2 = tryLuaSocketFetch(url, opts.timeout or settings.fetch_timeout, opts.followRedirects or settings.fetch_follow_redirects)
-        if res2 and res2.Body then
-            if settings.cache_enabled then pcall(fs.writeFile, cacheKey, res2.Body) end
+            if settings.cache_enabled then
+                env.writefile(cacheKey, res.Body)
+            end
             addCode('HttpFetch("' .. tostring(url) .. '", "luasocket")')
-            return { Body = res2.Body, StatusCode = res2.StatusCode or 200, Headers = res2.Headers or {}, StatusMessage = res2.StatusMessage or "OK", Success = true }
+            return {
+                Body = res.Body,
+                StatusCode = res.StatusCode or 200,
+                Headers = res.Headers or {},
+                StatusMessage = res.StatusMessage or "OK",
+                Success = true
+            }
         end
-        lastErr = lastErr .. tostring(err2) .. ";"
+        lastErr = err
 
-        local res3, err3 = tryCurlFetch(url, opts.timeout or settings.fetch_timeout, opts.followRedirects or settings.fetch_follow_redirects)
-        if res3 and res3.Body then
-            if settings.cache_enabled then pcall(fs.writeFile, cacheKey, res3.Body) end
+        -- Fallback to curl via io.popen
+        local res2, err2 = tryCurlFetch(url, opts.timeout or settings.fetch_timeout, opts.followRedirects or settings.fetch_follow_redirects)
+        if res2 and res2.Body then
+            if settings.cache_enabled then
+                env.writefile(cacheKey, res2.Body)
+            end
             addCode('HttpFetch("' .. tostring(url) .. '", "curl")')
-            return { Body = res3.Body, StatusCode = res3.StatusCode or 0, Headers = res3.Headers or {}, StatusMessage = res3.StatusMessage or "OK", Success = true }
+            return {
+                Body = res2.Body,
+                StatusCode = res2.StatusCode or 0,
+                Headers = res2.Headers or {},
+                StatusMessage = res2.StatusMessage or "OK",
+                Success = true
+            }
         end
-        lastErr = lastErr .. tostring(err3) .. ";"
+        lastErr = lastErr .. ";" .. tostring(err2)
     end
 
     addComment("Fetch failed for " .. tostring(url) .. " -> " .. tostring(lastErr))
     return createMockResponse("Fetch failed: " .. tostring(lastErr))
 end
 
+-- Expose fetch function into env for scripts to use when allowed
 env.HttpFetchAny = function(url, options)
     local opts = type(options) == "table" and options or {}
     local res = fetchUrlAny(url, opts)
+    -- Log the call for reconstruction
     addCode('HttpFetchAny("' .. tostring(url) .. '")')
     return res.Body
 end
 
+-- Also provide a richer request-like API
 env.Fetch = function(options)
     local url = type(options) == "table" and (options.Url or options.url) or tostring(options)
     local method = type(options) == "table" and (options.Method or options.method or "GET") or "GET"
@@ -1042,9 +1057,15 @@ env.Fetch = function(options)
     }
     local body = fetchUrlAny(url, opts)
     addCode('Fetch({Url = "' .. tostring(url) .. '", Method = "' .. tostring(method) .. '"})')
-    return { Body = body.Body, StatusCode = body.StatusCode, Headers = body.Headers, Success = body.Success }
+    return {
+        Body = body.Body,
+        StatusCode = body.StatusCode,
+        Headers = body.Headers,
+        Success = body.Success
+    }
 end
 
+-- Optional: allow user to clear fetch cache
 env.ClearFetchCache = function()
     if not settings.cache_enabled then
         addComment("ClearFetchCache called but cache not enabled")
@@ -1053,78 +1074,39 @@ env.ClearFetchCache = function()
     addCode('delfolder("' .. settings.cache_dir .. '")')
 end
 
--- MINIFIER (simple)
-local function simpleMinify(src)
-    local out = {}
-    for line in src:gmatch("[^\r\n]+") do
-        if not line:match("^%s*%-%-") then
-            local s = line:gsub("%s+", " ")
-            s = s:gsub("%s+$", "")
-            if s ~= "" then table.insert(out, s) end
-        end
-    end
-    return table.concat(out, "\n")
+-- New Feature: optional dump to file after reconstruction
+local function dumpReconstructedCodeToFile(path)
+    if not path or path == "" then return end
+    -- We only record the intention to write: keep consistent with existing writefile semantics
+    addCode('writefile("' .. path .. '", [reconstructed code])')
 end
 
--- Assemble reconstructed code into string
-local function assembleReconstructed()
-    local lines = {}
-    table.insert(lines, "-- Reconstructed Lua Code")
-    table.insert(lines, "-- Generated by Roblox Environment Logger")
-    table.insert(lines, "-- Original file: " .. scriptPath)
-    table.insert(lines, "")
-    for _, line in ipairs(codeLines) do
-        table.insert(lines, line)
-    end
-    table.insert(lines, "")
-    -- Add summary as comment
-    table.insert(lines, "-- Summary:")
-    table.insert(lines, "-- Instances created: " .. tostring(instanceCounter))
-    table.insert(lines, "-- Lines captured: " .. tostring(#codeLines))
-    table.insert(lines, "-- Tracked functions: " .. tostring(functionCounter))
-    if settings.constant_collection then
-        table.insert(lines, "-- Collected constants: ")
-        for k, v in pairs(collected_constants) do
-            table.insert(lines, "--   " .. tostring(k) .. " (count=" .. tostring(v) .. ")")
-        end
-    end
-    table.insert(lines, "-- End of reconstructed code")
-    return table.concat(lines, "\n")
-end
-
--- Export reconstructed code to file (preferred) or record write intent
-local function exportReconstructed(path)
-    path = path or (scriptPath .. ".reconstructed.lua")
-    local assembled = assembleReconstructed()
-    local final = assembled
-    if settings.minifier then
-        final = simpleMinify(assembled)
-    end
-    -- Try to write via fs if present
-    local ok, err = pcall(fs.writeFile, path, final)
-    if ok then
-        addComment("Wrote reconstructed code to " .. path)
-    else
-        -- fall back to env.writefile (records intent)
-        env.writefile(path, final)
-        addComment("Recorded write intent to " .. path .. " (fs.writeFile unavailable or failed)")
-    end
-    -- Optionally also write a summary JSON (basic)
-    if settings.constant_collection then
-        local summaryPath = path .. ".summary.txt"
-        local s = {"Collected constants summary:"}
-        for k, v in pairs(collected_constants) do
-            table.insert(s, tostring(k) .. ": " .. tostring(v))
-        end
-        local ok2 = pcall(fs.writeFile, summaryPath, table.concat(s, "\n"))
-        if not ok2 then
-            env.writefile(summaryPath, table.concat(s, "\n"))
+-- New Feature: debug/verbose helper
+local function vprint(...)
+    if settings.verbose then
+        local args = {...}
+        for i = 1, #args do
+            addComment(tostring(args[i]))
         end
     end
 end
 
--- Final step: export without printing to stdout
-local outPath = settings.output_file or (scriptPath .. ".reconstructed.lua")
-exportReconstructed(outPath)
+-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
--- End of script (no final prints)
+-- Output ONLY the reconstructed code
+print("")
+print("")
+print("")
+print("")
+
+for _, line in ipairs(codeLines) do
+    print(line)
+end
+
+print("")
+print("-- end.")
+
+-- If requested, record a writefile intent for final output
+if settings.output_file then
+    dumpReconstructedCodeToFile(settings.output_file)
+end
